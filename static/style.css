@@ -6,10 +6,10 @@
 }
 
 :root {
-    --primary-color: #4a90e2;      /* Спокойный синий - доверие, безопасность */
+    --primary-color: #4a90e2;
     --primary-dark: #357abd;
-    --secondary-color: #7ed321;    /* Свежий зеленый - здоровье, рост */
-    --accent-color: #ff6b6b;       /* Теплый коралловый - внимание, забота */
+    --secondary-color: #7ed321;
+    --accent-color: #ff6b6b;
     --light-bg: #f8f9fa;
     --card-bg: #ffffff;
     --text-dark: #2c3e50;
@@ -32,12 +32,34 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+    min-height: 100vh;
 }
 
 /* Заголовок */
 header {
     text-align: center;
     margin-bottom: 40px;
+}
+
+.header-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.back-link {
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.back-link:hover {
+    color: var(--primary-dark);
 }
 
 h1 {
@@ -182,11 +204,13 @@ h1 {
 .goal-card {
     cursor: pointer;
     text-align: center;
+    transition: all 0.3s ease;
 }
 
 .goal-card.selected {
     border: 2px solid var(--primary-color);
     box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    transform: translateY(-2px);
 }
 
 .goal-card h3 {
@@ -196,16 +220,28 @@ h1 {
     font-size: 1.3rem;
 }
 
+.goal-card p {
+    color: var(--text-light);
+}
+
 /* Результаты анализов */
 .analyses-result {
     margin-top: 40px;
     animation: fadeIn 0.5s ease;
 }
 
+.result-info {
+    background: #e3f2fd;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--primary-color);
+}
+
 .analyses-list {
     display: grid;
     gap: 15px;
-    margin-top: 20px;
+    margin: 20px 0;
 }
 
 .analysis-item {
@@ -214,17 +250,47 @@ h1 {
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
     border-left: 4px solid var(--secondary-color);
+    transition: transform 0.2s ease;
+}
+
+.analysis-item:hover {
+    transform: translateX(5px);
 }
 
 .analysis-item h4 {
     color: var(--text-dark);
     margin-bottom: 8px;
     font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
 }
 
 .analysis-item p {
     color: var(--text-light);
     font-size: 0.95rem;
+    margin-bottom: 5px;
+}
+
+.analysis-details {
+    font-style: italic;
+    color: #666;
+    font-size: 0.9rem !important;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+}
+
+.disclaimer {
+    background: #fff3cd;
+    padding: 15px 20px;
+    border-radius: 8px;
+    border-left: 4px solid #ffc107;
+    margin-top: 20px;
+}
+
+.disclaimer p {
+    color: #856404;
+    font-size: 0.9rem;
+    margin: 0;
 }
 
 /* Уведомления */
@@ -233,6 +299,7 @@ h1 {
     border-radius: 8px;
     margin-bottom: 20px;
     font-weight: 500;
+    animation: slideIn 0.3s ease;
 }
 
 .flash-message.success {
@@ -253,6 +320,11 @@ h1 {
     to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
     .container {
@@ -261,6 +333,16 @@ h1 {
     
     h1 {
         font-size: 2rem;
+    }
+    
+    .header-nav {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .back-link {
+        position: static;
+        align-self: flex-start;
     }
     
     .auth-card, .goal-card {
@@ -289,4 +371,16 @@ h1 {
     .auth-card {
         padding: 15px;
     }
+    
+    .goal-card h3 {
+        font-size: 1.1rem;
+    }
+}
+
+.guest-notice {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    font-style: italic;
 }
