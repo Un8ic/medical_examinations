@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конструктор целей | Мои МедАнализы</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Конструктор целей здоровья</h1>
+            <p class="tagline">Выберите цель и получите персонализированный список анализов</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Блок с уведомлениями -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="goal-selection">
+                <h2>Выберите вашу цель</h2>
+                <div class="goals-grid">
+                    {% for goal in health_goals %}
+                    <div class="goal-card" data-goal-id="{{ goal.id }}">
+                        <h3>{{ goal.title }}</h3>
+                        <p>{{ goal.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div id="analyses-result" class="analyses-result" style="display: none;">
+                <h2>Рекомендуемые анализы</h2>
+                <div id="analyses-list" class="analyses-list">
+                    <!-- Список анализов будет подгружаться здесь через AJAX -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // JavaScript для загрузки анализов при выборе цели
+        document.querySelectorAll('.goal-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const goalId = this.getAttribute('data-goal-id');
+                
+                // Визуальное выделение выбранной карточки
+                document.querySelectorAll('.goal-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                // AJAX-запрос для получения анализов
+                fetch(`/get_analyses/${goalId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const resultContainer = document.getElementById('analyses-result');
+                        const analysesList = document.getElementById('analyses-list');
+                        
+                        analysesList.innerHTML = '';
+                        
+                        data.analyses.forEach(analysis => {
+                            const analysisItem = document.createElement('div');
+                            analysisItem.className = 'analysis-item';
+                            analysisItem.innerHTML = `
+                                <h4>${analysis.name}</h4>
+                                <p>${analysis.reason}</p>
+                            `;
+                            analysesList.appendChild(analysisItem);
+                        });
+                        
+                        resultContainer.style.display = 'block';
+                        resultContainer.scrollIntoView({ behavior: 'smooth' });
+                    })
+                    .catch(error => {
+                        console.error('Ошибка:', error);
+                    });
+            });
+        });
+    </script>
+</body>
+</html>
