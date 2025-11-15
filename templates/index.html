@@ -1,66 +1,75 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="light">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>МедКонструктор - Ваше здоровье под контролем</title>
-    <meta name="description" content="Персонализированный конструктор медицинских анализов для ваших целей здоровья">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Мои МедАнализы - Конструктор целей здоровья</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <div class="logo">
-                <h1>🏥 МедКонструктор</h1>
-                <p class="tagline">Ваше здоровье — под контролем</p>
-            </div>
+        <header>
+            <h1>Мои МедАнализы</h1>
+            <p class="tagline">Ваше здоровье — под контролем</p>
         </header>
 
         <main class="main-content">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="flash-message {{ category }}">{{ message | safe }}</div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-
-            <div class="hero-section">
-                <h2>Найдите нужные анализы за 2 минуты</h2>
-                <p>Персонализированный подбор медицинских обследований на основе ваших целей</p>
-            </div>
-
             <div class="auth-card">
-                <h3>Войдите в систему</h3>
+                <h2>Войдите в систему</h2>
 
-                <form action="{{ url_for('login') }}" method="POST" class="auth-form">
+                <form id="loginForm" class="auth-form">
                     <div class="input-group">
-                        <input type="email" placeholder="Ваш email" required aria-label="Email">
+                        <input type="email" placeholder="Email" required>
                     </div>
                     <div class="input-group">
-                        <input type="password" placeholder="Пароль" required aria-label="Пароль">
+                        <input type="password" placeholder="Пароль" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Войти</button>
                 </form>
 
                 <div class="divider">или</div>
 
-                <form action="{{ url_for('register') }}" method="POST" class="auth-form">
-                    <button type="submit" class="btn btn-secondary">Создать аккаунт</button>
+                <form id="registerForm" class="auth-form">
+                    <button type="submit" class="btn btn-secondary">Зарегистрироваться</button>
                 </form>
 
                 <div class="divider">или</div>
 
-                <a href="{{ url_for('enter_as_guest') }}" class="btn btn-guest">🎯 Попробовать конструктор целей</a>
+                <a href="goal_constructor.html" class="btn btn-guest">Войти как гость</a>
 
-                <p class="guest-notice">Гостевой доступ позволит ознакомиться со всеми возможностями без регистрации</p>
+                <p class="guest-notice">Гостевой вход позволит вам ознакомиться с возможностями конструктора целей</p>
             </div>
         </main>
-
-        <footer class="footer">
-            <p>© 2024 МедКонструктор. Все права защищены.</p>
-        </footer>
     </div>
+
+    <script>
+        // Обработка форм входа и регистрации
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            showMessage('Извините, функция входа в настоящее время в разработке.', 'info');
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            showMessage('Извините, функция регистрации в настоящее время в разработке.', 'info');
+        });
+
+        function showMessage(message, type) {
+            // Создаем элемент уведомления
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flash-message ${type}`;
+            messageDiv.textContent = message;
+            
+            // Вставляем перед формой
+            const authCard = document.querySelector('.auth-card');
+            authCard.insertBefore(messageDiv, authCard.firstChild);
+            
+            // Автоматически удаляем через 5 секунд
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+    </script>
 </body>
 </html>
