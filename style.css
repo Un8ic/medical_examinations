@@ -872,7 +872,7 @@ h2 {
     color: white;
 }
 
-/* Шаг 2: Анализы */
+/* Шаг 2: Анализы - ИСПРАВЛЕНИЯ ДЛЯ ЧЕКБОКСОВ */
 .selection-header {
     display: flex;
     justify-content: space-between;
@@ -935,8 +935,13 @@ h2 {
     gap: 15px;
 }
 
-.checklist-label input {
+/* СТАНДАРТНЫЕ ЧЕКБОКСЫ ДЛЯ АНАЛИЗОВ */
+#analyses-checklist .checklist-label input[type="checkbox"] {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
     margin-top: 3px;
+    flex-shrink: 0;
 }
 
 .analysis-info {
