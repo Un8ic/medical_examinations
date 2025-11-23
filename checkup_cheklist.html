@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Идеальный чекап | Мои МедАнализы</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-nav">
+                <a href="index.html" class="back-link">← На главную</a>
+                <h1>Идеальный чекап</h1>
+            </div>
+            <p class="tagline">Персонализированный план обследования с расчетом стоимости</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Шаги прогресса -->
+            <div class="progress-steps">
+                <div class="step active" data-step="1">
+                    <span class="step-number">1</span>
+                    <span class="step-text">Параметры</span>
+                </div>
+                <div class="step" data-step="2">
+                    <span class="step-number">2</span>
+                    <span class="step-text">Анализы</span>
+                </div>
+                <div class="step" data-step="3">
+                    <span class="step-number">3</span>
+                    <span class="step-text">Клиника</span>
+                </div>
+                <div class="step" data-step="4">
+                    <span class="step-number">4</span>
+                    <span class="step-text">Результат</span>
+                </div>
+            </div>
+
+            <!-- Шаг 1: Параметры пользователя -->
+            <div id="step-1" class="step-content active">
+                <div class="parameters-card">
+                    <h2>Ваши параметры</h2>
+                    <p class="subtitle">Это поможет нам подобрать оптимальный набор анализов</p>
+
+                    <div class="parameters-grid">
+                        <div class="parameter-group">
+                            <label>Пол</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="gender" value="male" checked>
+                                    <span class="radio-custom"></span>
+                                    Мужской
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="gender" value="female">
+                                    <span class="radio-custom"></span>
+                                    Женский
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="parameter-group">
+                            <label for="age">Возраст</label>
+                            <input type="number" id="age" min="18" max="80" value="30" class="parameter-input">
+                        </div>
+
+                        <div class="parameter-group">
+                            <label for="height">Рост (см)</label>
+                            <input type="number" id="height" min="140" max="220" value="170" class="parameter-input">
+                        </div>
+
+                        <div class="parameter-group">
+                            <label for="weight">Вес (кг)</label>
+                            <input type="number" id="weight" min="40" max="200" value="70" class="parameter-input">
+                        </div>
+
+                        <div class="parameter-group full-width">
+                            <label>Факторы риска</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="risk_factors" value="smoking">
+                                    <span class="checkbox-custom"></span>
+                                    Курение
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="risk_factors" value="alcohol">
+                                    <span class="checkbox-custom"></span>
+                                    Регулярное употребление алкоголя
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="risk_factors" value="stress">
+                                    <span class="checkbox-custom"></span>
+                                    Хронический стресс
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="risk_factors" value="sedentary">
+                                    <span class="checkbox-custom"></span>
+                                    Сидячий образ жизни
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="risk_factors" value="family_history">
+                                    <span class="checkbox-custom"></span>
+                                    Наследственные заболевания
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="parameter-group full-width">
+                            <label>Цели обследования</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="goals" value="prevention" checked>
+                                    <span class="checkbox-custom"></span>
+                                    Профилактика заболеваний
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="goals" value="weight">
+                                    <span class="checkbox-custom"></span>
+                                    Контроль веса
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="goals" value="hormones">
+                                    <span class="checkbox-custom"></span>
+                                    Проверка гормонального фона
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="goals" value="heart">
+                                    <span class="checkbox-custom"></span>
+                                    Здоровье сердца
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="goals" value="vitamins">
+                                    <span class="checkbox-custom"></span>
+                                    Уровень витаминов
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary next-step" data-next="2">Далее →</button>
+                </div>
+            </div>
+
+            <!-- Шаг 2: Выбор анализов -->
+            <div id="step-2" class="step-content">
+                <div class="analyses-selection">
+                    <h2>Выберите анализы</h2>
+                    <p class="subtitle">Рекомендовано на основе ваших параметров</p>
+
+                    <div class="selection-header">
+                        <div class="total-price">
+                            Общая стоимость: <span id="total-cost">0</span> ₽
+                        </div>
+                        <div class="selection-actions">
+                            <button class="btn btn-outline" id="select-all">Выбрать все</button>
+                            <button class="btn btn-outline" id="deselect-all">Снять все</button>
+                        </div>
+                    </div>
+
+                    <div id="analyses-checklist" class="checklist">
+                        <!-- Анализы будут загружены через JavaScript -->
+                    </div>
+
+                    <div class="step-navigation">
+                        <button class="btn btn-secondary prev-step" data-prev="1">← Назад</button>
+                        <button class="btn btn-primary next-step" data-next="3">Далее →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Шаг 3: Выбор клиники -->
+            <div id="step-3" class="step-content">
+                <div class="clinics-selection">
+                    <h2>Выберите клинику</h2>
+                    <p class="subtitle">Клиники Новосибирска с актуальными ценами</p>
+
+                    <div class="clinics-list" id="clinics-list">
+                        <!-- Клиники будут загружены через JavaScript -->
+                    </div>
+
+                    <div class="step-navigation">
+                        <button class="btn btn-secondary prev-step" data-prev="2">← Назад</button>
+                        <button class="btn btn-primary next-step" data-next="4">Рассчитать итог →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Шаг 4: Итоги -->
+            <div id="step-4" class="step-content">
+                <div class="results-card">
+                    <h2>Ваш идеальный чекап готов!</h2>
+                    
+                    <div class="results-grid">
+                        <div class="results-summary">
+                            <h3>Сводка</h3>
+                            <div class="summary-item">
+                                <span>Выбранных анализов:</span>
+                                <span id="selected-count">0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Общая стоимость:</span>
+                                <span id="final-cost">0</span> ₽
+                            </div>
+                            <div class="summary-item">
+                                <span>Выбранная клиника:</span>
+                                <span id="selected-clinic">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Время подготовки:</span>
+                                <span>1-2 дня</span>
+                            </div>
+                        </div>
+
+                        <div class="results-actions">
+                            <h3>Действия</h3>
+                            <button class="btn btn-primary" id="print-plan">
+                                📄 Распечатать план
+                            </button>
+                            <button class="btn btn-secondary" id="save-pdf">
+                                💾 Сохранить PDF
+                            </button>
+                            <button class="btn btn-checkup" id="book-appointment">
+                                🏥 Записаться на прием
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="selected-analyses">
+                        <h3>Выбранные анализы</h3>
+                        <div id="final-analyses-list" class="analyses-list">
+                            <!-- Список выбранных анализов -->
+                        </div>
+                    </div>
+
+                    <div class="step-navigation">
+                        <button class="btn btn-secondary" id="start-over">Начать заново</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="checkup_data.js"></script>
+    <script src="checkup_script.js"></script>
+</body>
+</html>
