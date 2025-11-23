@@ -1292,6 +1292,39 @@
                 document.getElementById('save-pdf').addEventListener('click', () => {
                     this.savePDF();
                 });
+
+                // Добавляем обработчики для чекбоксов параметров
+                this.setupParameterCheckboxes();
+            }
+
+            setupParameterCheckboxes() {
+                // Обработчики для факторов риска
+                document.querySelectorAll('input[name="risk_factors"]').forEach(checkbox => {
+                    checkbox.addEventListener('change', () => {
+                        this.collectUserParams();
+                    });
+                });
+
+                // Обработчики для целей обследования
+                document.querySelectorAll('input[name="goals"]').forEach(checkbox => {
+                    checkbox.addEventListener('change', () => {
+                        this.collectUserParams();
+                    });
+                });
+
+                // Обработчики для пола
+                document.querySelectorAll('input[name="gender"]').forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        this.collectUserParams();
+                    });
+                });
+
+                // Обработчики для числовых полей
+                ['age', 'height', 'weight'].forEach(field => {
+                    document.getElementById(field).addEventListener('input', () => {
+                        this.collectUserParams();
+                    });
+                });
             }
 
             goToStep(stepNumber) {
@@ -1451,18 +1484,22 @@
                 const age = this.userParams.age;
                 const gender = this.userParams.gender;
                 const goals = this.userParams.goals;
+                const riskFactors = this.userParams.riskFactors;
 
+                // Рекомендации по возрасту
                 if (age > 40) {
                     this.markAsRecommended('ecg');
                     this.markAsRecommended('ultrasound');
                 }
 
+                // Рекомендации по полу
                 if (gender === 'female') {
                     this.markAsRecommended('estradiol');
                 } else if (gender === 'male') {
                     this.markAsRecommended('testosterone');
                 }
 
+                // Рекомендации по целям
                 if (goals.includes('hormones')) {
                     this.markAsRecommended('tsh');
                     this.markAsRecommended('cortisol');
@@ -1477,6 +1514,23 @@
                     this.markAsRecommended('ecg');
                     this.markAsRecommended('crp');
                 }
+
+                // Рекомендации по факторам риска
+                if (riskFactors.includes('smoking') || riskFactors.includes('family_history')) {
+                    this.markAsRecommended('crp');
+                    this.markAsRecommended('cholesterol');
+                }
+
+                if (riskFactors.includes('sedentary')) {
+                    this.markAsRecommended('ecg');
+                    this.markAsRecommended('hba1c');
+                }
+
+                if (riskFactors.includes('stress')) {
+                    this.markAsRecommended('cortisol');
+                }
+
+                this.showNotification(`Подобрано рекомендаций на основе ваших параметров`, 'success');
             }
 
             markAsRecommended(analysisId) {
@@ -1492,14 +1546,28 @@
             }
 
             collectUserParams() {
+                // Собираем выбранные факторы риска
+                const riskFactors = [];
+                document.querySelectorAll('input[name="risk_factors"]:checked').forEach(checkbox => {
+                    riskFactors.push(checkbox.value);
+                });
+
+                // Собираем выбранные цели
+                const goals = [];
+                document.querySelectorAll('input[name="goals"]:checked').forEach(checkbox => {
+                    goals.push(checkbox.value);
+                });
+
                 this.userParams = {
                     gender: document.querySelector('input[name="gender"]:checked').value,
-                    age: parseInt(document.getElementById('age').value),
-                    height: parseInt(document.getElementById('height').value),
-                    weight: parseInt(document.getElementById('weight').value),
-                    riskFactors: Array.from(document.querySelectorAll('input[name="risk_factors"]:checked')).map(cb => cb.value),
-                    goals: Array.from(document.querySelectorAll('input[name="goals"]:checked')).map(cb => cb.value)
+                    age: parseInt(document.getElementById('age').value) || 30,
+                    height: parseInt(document.getElementById('height').value) || 170,
+                    weight: parseInt(document.getElementById('weight').value) || 70,
+                    riskFactors: riskFactors,
+                    goals: goals
                 };
+
+                console.log('Собранные параметры:', this.userParams);
             }
 
             selectAllAnalyses() {
@@ -1556,12 +1624,16 @@
                 this.selectedClinic = null;
                 this.userParams = {};
                 
+                // Сбрасываем все чекбоксы и радио-кнопки
                 document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
                 document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+                
+                // Устанавливаем значения по умолчанию
                 document.querySelector('input[name="gender"][value="male"]').checked = true;
                 document.getElementById('age').value = 30;
                 document.getElementById('height').value = 170;
                 document.getElementById('weight').value = 70;
+                document.querySelector('input[name="goals"][value="prevention"]').checked = true;
                 
                 this.goToStep('1');
                 this.loadAnalysesChecklist();
