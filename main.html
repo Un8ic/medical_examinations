@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная | Мои МедАнализы</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Уведомления -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <div class="container">
+        <header class="main-header">
+            <div class="header-content">
+                <h1>Мои МедАнализы</h1>
+                <p class="tagline">Инновационный подход к вашему здоровью</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Преимущества -->
+            <section class="features-section">
+                <h2>Почему выбирают нас?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Персонализированный подход</h3>
+                        <p>Индивидуальные рекомендации анализов на основе ваших целей и параметров</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💡</div>
+                        <h3>Экспертные знания</h3>
+                        <p>Рекомендации основаны на современных медицинских протоколах и исследованиях</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🏥</div>
+                        <h3>Партнерские клиники</h3>
+                        <p>Сотрудничаем с лучшими медицинскими центрами Новосибирска</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💰</div>
+                        <h3>Прозрачные цены</h3>
+                        <p>Знайте точную стоимость обследования до визита в клинику</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Экономия времени</h3>
+                        <p>Все необходимые анализы в одном месте без лишних посещений врачей</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h3>Безопасность данных</h3>
+                        <p>Ваши медицинские данные защищены и конфиденциальны</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Навигация по сервисам -->
+            <section class="services-section">
+                <h2>Наши сервисы</h2>
+                <div class="services-grid">
+                    <a href="goal_constructor.html" class="service-card">
+                        <div class="service-icon">🎯</div>
+                        <h3>Конструктор целей здоровья</h3>
+                        <p>Подберите анализы под конкретные цели: спорт, беременность, чекап и другие</p>
+                        <span class="service-link">Начать →</span>
+                    </a>
+                    
+                    <a href="checkup_checklist.html" class="service-card">
+                        <div class="service-icon">🩺</div>
+                        <h3>Идеальный чекап</h3>
+                        <p>Полное обследование организма с расчетом стоимости и выбором клиники</p>
+                        <span class="service-link">Создать →</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Команда -->
+            <section class="team-section">
+                <h2>Наша команда</h2>
+                <p class="team-subtitle">Профессионалы, которые заботятся о вашем здоровье</p>
+                
+                <div class="team-grid">
+                    <div class="team-card">
+                        <div class="team-photo">
+                            <div class="photo-placeholder">АЗ</div>
+                        </div>
+                        <h3>Зубкова Анастасия</h3>
+                        <p class="team-role">Медицинский консультант</p>
+                        <p class="team-bio">Специалист по профилактической медицине и индивидуальным программам обследования</p>
+                    </div>
+                    
+                    <div class="team-card">
+                        <div class="team-photo">
+                            <div class="photo-placeholder">АМ</div>
+                        </div>
+                        <h3>Малашина Анастасия</h3>
+                        <p class="team-role">Эксперт по лабораторной диагностике</p>
+                        <p class="team-bio">Опыт работы в ведущих лабораториях, знание современных методов диагностики</p>
+                    </div>
+                    
+                    <div class="team-card">
+                        <div class="team-photo">
+                            <div class="photo-placeholder">ДМ</div>
+                        </div>
+                        <h3>Моисеев Денис</h3>
+                        <p class="team-role">Технический директор</p>
+                        <p class="team-bio">Разработка и поддержка IT-решений для удобства пользователей</p>
+                    </div>
+                    
+                    <div class="team-card">
+                        <div class="team-photo">
+                            <div class="photo-placeholder">БШ</div>
+                        </div>
+                        <h3>Шумейко Богдан</h3>
+                        <p class="team-role">Координатор клиник-партнеров</p>
+                        <p class="team-bio">Обеспечение качественного сервиса в медицинских учреждениях-партнерах</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="main-footer">
+            <p>&copy; 2024 Мои МедАнализы. Все права защищены.</p>
+            <p>Ваше здоровье — наш приоритет</p>
+        </footer>
+    </div>
+
+    <script>
+        // Показываем приветственное уведомление
+        setTimeout(() => {
+            showNotification('Добро пожаловать! Вы вошли как гость. Ознакомьтесь с нашими сервисами.', 'success');
+        }, 1000);
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span class="notification-message">${message}</span>
+                    <button class="notification-close">&times;</button>
+                </div>
+            `;
+            
+            const container = document.getElementById('notification-container');
+            container.appendChild(notification);
+            
+            // Автоматическое закрытие через 5 секунд
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+            
+            // Закрытие по клику
+            notification.querySelector('.notification-close').addEventListener('click', () => {
+                notification.remove();
+            });
+        }
+
+        // Демонстрация уведомлений при клике на карточки услуг
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                const serviceName = card.querySelector('h3').textContent;
+                showNotification(`Переход к сервису: ${serviceName}`, 'info');
+                
+                // Перенаправление через 1 секунду
+                setTimeout(() => {
+                    window.location.href = card.getAttribute('href');
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>
