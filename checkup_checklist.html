@@ -8,10 +8,13 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Уведомления -->
+    <div id="notification-container" class="notification-container"></div>
+
     <div class="container">
         <header>
             <div class="header-nav">
-                <a href="index.html" class="back-link">← На главную</a>
+                <a href="main.html" class="back-link">← На главную</a>
                 <h1>Идеальный чекап</h1>
             </div>
             <p class="tagline">Персонализированный план обследования с расчетом стоимости</p>
@@ -242,7 +245,667 @@
         </main>
     </div>
 
-    <script src="checkup_data.js"></script>
-    <script src="checkup_script.js"></script>
+    <script>
+        // Данные анализов для чек-листа (цены для Новосибирска)
+        const checkupAnalyses = {
+            basic: [
+                {
+                    id: 'blood_general',
+                    name: 'Общий анализ крови',
+                    category: 'basic',
+                    price: 450,
+                    description: 'Оценка основных показателей крови',
+                    details: 'Включает гемоглобин, эритроциты, лейкоциты, тромбоциты, СОЭ',
+                    recommended: true,
+                    required: false
+                },
+                {
+                    id: 'blood_bio',
+                    name: 'Биохимический анализ крови',
+                    category: 'basic',
+                    price: 1890,
+                    description: 'Комплексная оценка функции органов',
+                    details: 'АЛТ, АСТ, билирубин, креатинин, мочевина, глюкоза, общий белок',
+                    recommended: true,
+                    required: false
+                },
+                {
+                    id: 'urine_general',
+                    name: 'Общий анализ мочи',
+                    category: 'basic',
+                    price: 350,
+                    description: 'Оценка состояния мочевыделительной системы',
+                    details: 'Цвет, прозрачность, плотность, белок, глюкоза, лейкоциты',
+                    recommended: true,
+                    required: false
+                }
+            ],
+
+            hormones: [
+                {
+                    id: 'tsh',
+                    name: 'ТТГ (тиреотропный гормон)',
+                    category: 'hormones',
+                    price: 520,
+                    description: 'Оценка функции щитовидной железы',
+                    details: 'Основной регулятор работы щитовидной железы',
+                    recommended: false,
+                    required: false
+                },
+                {
+                    id: 'cortisol',
+                    name: 'Кортизол',
+                    category: 'hormones',
+                    price: 580,
+                    description: 'Гормон стресса',
+                    details: 'Оценка функции надпочечников',
+                    recommended: false,
+                    required: false
+                },
+                {
+                    id: 'testosterone',
+                    name: 'Тестостерон общий',
+                    category: 'hormones',
+                    price: 610,
+                    description: 'Мужской половой гормон',
+                    details: 'Важен для обоих полов',
+                    recommended: false,
+                    required: false
+                },
+                {
+                    id: 'estradiol',
+                    name: 'Эстрадиол',
+                    category: 'hormones',
+                    price: 590,
+                    description: 'Женский половой гормон',
+                    details: 'Оценка репродуктивного здоровья',
+                    recommended: false,
+                    required: false
+                }
+            ],
+
+            vitamins: [
+                {
+                    id: 'vitamin_d',
+                    name: 'Витамин D',
+                    category: 'vitamins',
+                    price: 1750,
+                    description: '25-ОН Витамин D',
+                    details: 'Критически важен для иммунитета и костей',
+                    recommended: true,
+                    required: false
+                },
+                {
+                    id: 'vitamin_b12',
+                    name: 'Витамин B12',
+                    category: 'vitamins',
+                    price: 890,
+                    description: 'Цианокобаламин',
+                    details: 'Влияет на кроветворение и нервную систему',
+                    recommended: false,
+                    required: false
+                },
+                {
+                    id: 'ferritin',
+                    name: 'Ферритин',
+                    category: 'vitamins',
+                    price: 620,
+                    description: 'Маркер запасов железа',
+                    details: 'Показывает уровень железа в организме',
+                    recommended: true,
+                    required: false
+                }
+            ],
+
+            special: [
+                {
+                    id: 'hba1c',
+                    name: 'Гликированный гемоглобин',
+                    category: 'special',
+                    price: 720,
+                    description: 'Контроль уровня сахара',
+                    details: 'Показывает средний уровень глюкозы за 3 месяца',
+                    recommended: true,
+                    required: false
+                },
+                {
+                    id: 'cholesterol',
+                    name: 'Липидный профиль',
+                    category: 'special',
+                    price: 850,
+                    description: 'Оценка риска атеросклероза',
+                    details: 'Холестерин общий, ЛПНП, ЛПВП, триглицериды',
+                    recommended: true,
+                    required: false
+                },
+                {
+                    id: 'crp',
+                    name: 'С-реактивный белок',
+                    category: 'special',
+                    price: 480,
+                    description: 'Маркер воспаления',
+                    details: 'Показывает наличие воспалительных процессов',
+                    recommended: false,
+                    required: false
+                },
+                {
+                    id: 'ecg',
+                    name: 'ЭКГ (электрокардиограмма)',
+                    category: 'special',
+                    price: 950,
+                    description: 'Оценка работы сердца',
+                    details: 'Регистрация электрической активности сердца',
+                    recommended: true,
+                    required: false
+                },
+                {
+                    id: 'ultrasound',
+                    name: 'УЗИ органов брюшной полости',
+                    category: 'special',
+                    price: 2200,
+                    description: 'Комплексное УЗИ',
+                    details: 'Печень, желчный пузырь, поджелудочная, селезенка, почки',
+                    recommended: true,
+                    required: false
+                }
+            ]
+        };
+
+        // Данные клиник Новосибирска
+        const novosibirskClinics = [
+            {
+                id: 'invitro',
+                name: 'ИНВИТРО',
+                logo: '🏥',
+                rating: 4.8,
+                reviews: 1247,
+                address: 'ул. Ленина, 12',
+                phone: '+7 (383) 123-45-67',
+                workingHours: 'пн-вс: 7:00-20:00',
+                features: ['Онлайн-запись', 'Результаты онлайн', 'Срочные анализы'],
+                discount: 'При единовременной сдаче 5+ анализов - скидка 10%',
+                deliveryTime: '1-2 рабочих дня'
+            },
+            {
+                id: 'gemotest',
+                name: 'Гемотест',
+                logo: '🩺',
+                rating: 4.6,
+                reviews: 893,
+                address: 'пр. Карла Маркса, 45',
+                phone: '+7 (383) 234-56-78',
+                workingHours: 'пн-пт: 8:00-19:00, сб-вс: 8:00-17:00',
+                features: ['Современное оборудование', 'Детские заборы', 'Бесплатная парковка'],
+                discount: 'Скидка 15% по карте здоровья',
+                deliveryTime: '1-3 рабочих дня'
+            },
+            {
+                id: 'citilab',
+                name: 'ЦИТИЛАБ',
+                logo: '🔬',
+                rating: 4.7,
+                reviews: 756,
+                address: 'ул. Кирова, 32',
+                phone: '+7 (383) 345-67-89',
+                workingHours: 'круглосуточно',
+                features: ['Круглосуточный забор', 'Собственная лаборатория', 'СМС-оповещения'],
+                discount: 'Первичным клиентам скидка 20%',
+                deliveryTime: '1-2 рабочих дня'
+            },
+            {
+                id: 'dna_clinic',
+                name: 'ДНК Клиника',
+                logo: '🧬',
+                rating: 4.9,
+                reviews: 542,
+                address: 'ул. Фрунзе, 8',
+                phone: '+7 (383) 456-78-90',
+                workingHours: 'пн-сб: 7:30-21:00, вс: 8:00-18:00',
+                features: ['Премиум-сервис', 'Консультация врача', 'Индивидуальный подход'],
+                discount: 'Комплексные программы со скидкой до 25%',
+                deliveryTime: '1 рабочий день'
+            },
+            {
+                id: 'medical_on_line',
+                name: 'Medical On Group',
+                logo: '⚕️',
+                rating: 4.5,
+                reviews: 634,
+                address: 'пл. Карла Маркса, 7',
+                phone: '+7 (383) 567-89-01',
+                workingHours: 'пн-пт: 8:00-20:00, сб: 9:00-18:00',
+                features: ['Немецкое оборудование', 'Европейские стандарты', 'Врач-куратор'],
+                discount: 'При покупке чекапа - консультация врача бесплатно',
+                deliveryTime: '2-3 рабочих дня'
+            }
+        ];
+
+        // Основная логика чек-листа
+        class CheckupChecklist {
+            constructor() {
+                this.selectedAnalyses = new Set();
+                this.selectedClinic = null;
+                this.userParams = {};
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.loadAnalysesChecklist();
+                this.loadClinics();
+                this.updateProgress();
+                
+                // Показываем приветственное уведомление
+                setTimeout(() => {
+                    this.showNotification('Добро пожаловать в конструктор идеального чекапа! Заполните параметры для персонализированных рекомендаций.', 'info');
+                }, 1000);
+            }
+
+            setupEventListeners() {
+                // Навигация по шагам
+                document.querySelectorAll('.next-step').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const nextStep = e.target.dataset.next;
+                        this.goToStep(nextStep);
+                    });
+                });
+
+                document.querySelectorAll('.prev-step').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const prevStep = e.target.dataset.prev;
+                        this.goToStep(prevStep);
+                    });
+                });
+
+                // Выбор всех анализов
+                document.getElementById('select-all').addEventListener('click', () => {
+                    this.selectAllAnalyses();
+                });
+
+                document.getElementById('deselect-all').addEventListener('click', () => {
+                    this.deselectAllAnalyses();
+                });
+
+                // Перезапуск
+                document.getElementById('start-over').addEventListener('click', () => {
+                    this.startOver();
+                });
+
+                // Печать
+                document.getElementById('print-plan').addEventListener('click', () => {
+                    this.printPlan();
+                });
+
+                // Сохранение PDF
+                document.getElementById('save-pdf').addEventListener('click', () => {
+                    this.savePDF();
+                });
+
+                // Запись на прием
+                document.getElementById('book-appointment').addEventListener('click', () => {
+                    this.bookAppointment();
+                });
+            }
+
+            goToStep(stepNumber) {
+                // Скрываем все шаги
+                document.querySelectorAll('.step-content').forEach(step => {
+                    step.classList.remove('active');
+                });
+
+                // Показываем нужный шаг
+                document.getElementById(`step-${stepNumber}`).classList.add('active');
+
+                // Обновляем прогресс
+                document.querySelectorAll('.step').forEach(step => {
+                    step.classList.remove('active');
+                    if (parseInt(step.dataset.step) <= stepNumber) {
+                        step.classList.add('active');
+                    }
+                });
+
+                // Обновляем данные на шагах
+                if (stepNumber === '2') {
+                    this.updateRecommendedAnalyses();
+                    this.showNotification('На основе ваших параметров мы подобрали рекомендуемые анализы. Вы можете настроить список.', 'info');
+                } else if (stepNumber === '3') {
+                    this.showNotification('Выберите клинику для сдачи анализов. Учтите расположение, график работы и специальные предложения.', 'info');
+                } else if (stepNumber === '4') {
+                    this.showFinalResults();
+                    this.showNotification('Ваш персонализированный план чекапа готов! Вы можете распечатать его или записаться на прием.', 'success');
+                }
+            }
+
+            loadAnalysesChecklist() {
+                const container = document.getElementById('analyses-checklist');
+                container.innerHTML = '';
+
+                Object.entries(checkupAnalyses).forEach(([category, analyses]) => {
+                    const categorySection = document.createElement('div');
+                    categorySection.className = 'checklist-category';
+                    
+                    const categoryTitle = document.createElement('h3');
+                    categoryTitle.className = 'category-title';
+                    categoryTitle.textContent = this.getCategoryName(category);
+                    categorySection.appendChild(categoryTitle);
+
+                    analyses.forEach(analysis => {
+                        const analysisItem = this.createAnalysisItem(analysis);
+                        categorySection.appendChild(analysisItem);
+                    });
+
+                    container.appendChild(categorySection);
+                });
+
+                this.updateTotalCost();
+            }
+
+            createAnalysisItem(analysis) {
+                const item = document.createElement('div');
+                item.className = `checklist-item ${analysis.recommended ? 'recommended' : ''}`;
+                item.innerHTML = `
+                    <label class="checklist-label">
+                        <input type="checkbox" value="${analysis.id}" 
+                               ${analysis.recommended ? 'checked' : ''}
+                               data-price="${analysis.price}">
+                        <span class="checkmark"></span>
+                        <div class="analysis-info">
+                            <div class="analysis-name">${analysis.name}</div>
+                            <div class="analysis-description">${analysis.description}</div>
+                            <div class="analysis-details">${analysis.details}</div>
+                        </div>
+                        <div class="analysis-price">${analysis.price} ₽</div>
+                    </label>
+                `;
+
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                checkbox.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        this.selectedAnalyses.add(analysis.id);
+                    } else {
+                        this.selectedAnalyses.delete(analysis.id);
+                    }
+                    this.updateTotalCost();
+                });
+
+                // Добавляем в выбранные, если рекомендован
+                if (analysis.recommended) {
+                    this.selectedAnalyses.add(analysis.id);
+                }
+
+                return item;
+            }
+
+            loadClinics() {
+                const container = document.getElementById('clinics-list');
+                container.innerHTML = '';
+
+                novosibirskClinics.forEach(clinic => {
+                    const clinicCard = document.createElement('div');
+                    clinicCard.className = 'clinic-card';
+                    clinicCard.innerHTML = `
+                        <div class="clinic-header">
+                            <div class="clinic-logo">${clinic.logo}</div>
+                            <div class="clinic-info">
+                                <h3 class="clinic-name">${clinic.name}</h3>
+                                <div class="clinic-rating">
+                                    ⭐ ${clinic.rating} (${clinic.reviews} отзывов)
+                                </div>
+                            </div>
+                            <label class="clinic-select">
+                                <input type="radio" name="clinic" value="${clinic.id}">
+                                <span class="radio-custom"></span>
+                            </label>
+                        </div>
+                        <div class="clinic-details">
+                            <div class="clinic-address">📍 ${clinic.address}</div>
+                            <div class="clinic-phone">📞 ${clinic.phone}</div>
+                            <div class="clinic-hours">🕒 ${clinic.workingHours}</div>
+                            <div class="clinic-features">
+                                ${clinic.features.map(feature => `<span class="feature-tag">${feature}</span>`).join('')}
+                            </div>
+                            <div class="clinic-discount">🎁 ${clinic.discount}</div>
+                            <div class="clinic-delivery">⏱️ Результаты: ${clinic.deliveryTime}</div>
+                        </div>
+                    `;
+
+                    const radio = clinicCard.querySelector('input[type="radio"]');
+                    radio.addEventListener('change', (e) => {
+                        if (e.target.checked) {
+                            this.selectedClinic = clinic;
+                            this.showNotification(`Выбрана клиника: ${clinic.name}`, 'success');
+                        }
+                    });
+
+                    container.appendChild(clinicCard);
+                });
+            }
+
+            updateTotalCost() {
+                let total = 0;
+                
+                document.querySelectorAll('#analyses-checklist input[type="checkbox"]:checked').forEach(checkbox => {
+                    total += parseInt(checkbox.dataset.price);
+                });
+
+                document.getElementById('total-cost').textContent = total.toLocaleString();
+            }
+
+            updateRecommendedAnalyses() {
+                this.collectUserParams();
+                
+                // Логика рекомендаций на основе параметров пользователя
+                const age = this.userParams.age;
+                const gender = this.userParams.gender;
+                const goals = this.userParams.goals;
+                const riskFactors = this.userParams.riskFactors;
+
+                // Снимаем все рекомендации
+                document.querySelectorAll('.checklist-item').forEach(item => {
+                    item.classList.remove('recommended');
+                });
+
+                // Базовые рекомендации для всех
+                this.markAsRecommended('blood_general');
+                this.markAsRecommended('blood_bio');
+                this.markAsRecommended('urine_general');
+                this.markAsRecommended('vitamin_d');
+                this.markAsRecommended('hba1c');
+                this.markAsRecommended('cholesterol');
+
+                // Рекомендации по возрасту
+                if (age > 40) {
+                    this.markAsRecommended('ecg');
+                    this.markAsRecommended('ultrasound');
+                }
+
+                // Рекомендации по полу
+                if (gender === 'female') {
+                    this.markAsRecommended('estradiol');
+                } else if (gender === 'male') {
+                    this.markAsRecommended('testosterone');
+                }
+
+                // Рекомендации по целям
+                if (goals.includes('hormones')) {
+                    this.markAsRecommended('tsh');
+                    this.markAsRecommended('cortisol');
+                }
+
+                if (goals.includes('vitamins')) {
+                    this.markAsRecommended('vitamin_b12');
+                    this.markAsRecommended('ferritin');
+                }
+
+                if (goals.includes('heart')) {
+                    this.markAsRecommended('ecg');
+                    this.markAsRecommended('crp');
+                }
+
+                // Рекомендации по факторам риска
+                if (riskFactors.includes('smoking') || riskFactors.includes('family_history')) {
+                    this.markAsRecommended('crp');
+                    this.markAsRecommended('ecg');
+                }
+            }
+
+            markAsRecommended(analysisId) {
+                const item = document.querySelector(`.checklist-item input[value="${analysisId}"]`).closest('.checklist-item');
+                item.classList.add('recommended');
+                
+                // Автоматически выбираем рекомендованные анализы
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                if (!checkbox.checked) {
+                    checkbox.checked = true;
+                    this.selectedAnalyses.add(analysisId);
+                }
+            }
+
+            collectUserParams() {
+                this.userParams = {
+                    gender: document.querySelector('input[name="gender"]:checked').value,
+                    age: parseInt(document.getElementById('age').value),
+                    height: parseInt(document.getElementById('height').value),
+                    weight: parseInt(document.getElementById('weight').value),
+                    riskFactors: Array.from(document.querySelectorAll('input[name="risk_factors"]:checked')).map(cb => cb.value),
+                    goals: Array.from(document.querySelectorAll('input[name="goals"]:checked')).map(cb => cb.value)
+                };
+            }
+
+            selectAllAnalyses() {
+                document.querySelectorAll('#analyses-checklist input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = true;
+                    this.selectedAnalyses.add(checkbox.value);
+                });
+                this.updateTotalCost();
+                this.showNotification('Все анализы выбраны', 'success');
+            }
+
+            deselectAllAnalyses() {
+                document.querySelectorAll('#analyses-checklist input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                    this.selectedAnalyses.delete(checkbox.value);
+                });
+                this.updateTotalCost();
+                this.showNotification('Все анализы сняты', 'info');
+            }
+
+            showFinalResults() {
+                const totalCost = Array.from(document.querySelectorAll('#analyses-checklist input[type="checkbox"]:checked'))
+                    .reduce((sum, checkbox) => sum + parseInt(checkbox.dataset.price), 0);
+
+                document.getElementById('selected-count').textContent = this.selectedAnalyses.size;
+                document.getElementById('final-cost').textContent = totalCost.toLocaleString();
+                document.getElementById('selected-clinic').textContent = this.selectedClinic ? this.selectedClinic.name : 'Не выбрана';
+
+                this.showSelectedAnalysesList();
+            }
+
+            showSelectedAnalysesList() {
+                const container = document.getElementById('final-analyses-list');
+                container.innerHTML = '';
+
+                Object.values(checkupAnalyses).flat().forEach(analysis => {
+                    if (this.selectedAnalyses.has(analysis.id)) {
+                        const item = document.createElement('div');
+                        item.className = 'analysis-item final-item';
+                        item.innerHTML = `
+                            <h4>${analysis.name}</h4>
+                            <p>${analysis.description}</p>
+                            <div class="analysis-price-final">${analysis.price} ₽</div>
+                        `;
+                        container.appendChild(item);
+                    }
+                });
+            }
+
+            startOver() {
+                this.selectedAnalyses.clear();
+                this.selectedClinic = null;
+                this.userParams = {};
+                
+                // Сброс форм
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+                document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+                document.querySelector('input[name="gender"][value="male"]').checked = true;
+                document.getElementById('age').value = 30;
+                document.getElementById('height').value = 170;
+                document.getElementById('weight').value = 70;
+                
+                this.goToStep('1');
+                this.loadAnalysesChecklist();
+                this.loadClinics();
+                this.showNotification('Чек-лист сброшен. Вы можете начать заново.', 'info');
+            }
+
+            printPlan() {
+                window.print();
+                this.showNotification('Подготовка к печати...', 'info');
+            }
+
+            savePDF() {
+                this.showNotification('Функция сохранения PDF будет доступна в ближайшее время', 'info');
+            }
+
+            bookAppointment() {
+                if (!this.selectedClinic) {
+                    this.showNotification('Пожалуйста, выберите клинику для записи', 'warning');
+                    return;
+                }
+                
+                this.showNotification(`Перенаправляем на сайт ${this.selectedClinic.name} для записи...`, 'success');
+                
+                // Имитация перенаправления
+                setTimeout(() => {
+                    this.showNotification('Запись на прием временно недоступна. Пожалуйста, позвоните в клинику напрямую.', 'info');
+                }, 2000);
+            }
+
+            getCategoryName(category) {
+                const names = {
+                    basic: 'Базовые анализы',
+                    hormones: 'Гормональные исследования',
+                    vitamins: 'Витамины и микроэлементы',
+                    special: 'Специальные исследования'
+                };
+                return names[category] || category;
+            }
+
+            updateProgress() {
+                // Дополнительная логика обновления прогресса
+            }
+
+            showNotification(message, type) {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.innerHTML = `
+                    <div class="notification-content">
+                        <span class="notification-message">${message}</span>
+                        <button class="notification-close">&times;</button>
+                    </div>
+                `;
+                
+                const container = document.getElementById('notification-container');
+                container.appendChild(notification);
+                
+                // Автоматическое закрытие через 5 секунд
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 5000);
+                
+                // Закрытие по клику
+                notification.querySelector('.notification-close').addEventListener('click', () => {
+                    notification.remove();
+                });
+            }
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            new CheckupChecklist();
+        });
+    </script>
 </body>
 </html>
