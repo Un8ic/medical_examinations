@@ -336,7 +336,6 @@ class CheckupChecklist {
                 <input type="checkbox" value="${analysis.id}" 
                        ${analysis.recommended ? 'checked' : ''}
                        data-price="${analysis.price}">
-                <span class="checkmark"></span>
                 <div class="analysis-info">
                     <div class="analysis-name">${analysis.name}</div>
                     <div class="analysis-description">${analysis.description}</div>
