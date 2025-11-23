@@ -85,7 +85,10 @@
                 <div class="team-grid">
                     <div class="team-card">
                         <div class="team-photo">
-                            <div class="photo-placeholder">АЗ</div>
+                            <img src="https://psv4.userapi.com/s/v1/d2/gl5j44YUl-HmcIo6MK6Xk0zjD2I533YRmrqKBYja7kD-QOwvpMGMQSTNrMKQYnvC2Ulf3Ur2bJjNlm15hdSsK4Zn2-bMdzliRCpcvpRVbj4pBQT3sp9WwEDFEH1j7_77NKlZW_R_Yw1d/ZubkovaAnastasia.jpg" 
+                                 alt="Зубкова Анастасия" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="photo-placeholder" style="display: none;">АЗ</div>
                         </div>
                         <h3>Зубкова Анастасия</h3>
                         <p class="team-role">Медицинский консультант</p>
@@ -94,7 +97,10 @@
                     
                     <div class="team-card">
                         <div class="team-photo">
-                            <div class="photo-placeholder">АМ</div>
+                            <img src="https://psv4.userapi.com/s/v1/d2/N5JxDGM_eJPLrRJNo9OnRK0d9FJ6oN_3lba7K12caiFPxEsbbTHOZLz3lAnDoW6BQ3Yjr1G37fmrVz6sMGYwFWgshNBzkTpxiwkEBIQRV_22w_WQeSDshw9DdbsrHdwf4ooao8rRQKBj/1654623193323907030.jpg" 
+                                 alt="Малашина Анастасия" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="photo-placeholder" style="display: none;">АМ</div>
                         </div>
                         <h3>Малашина Анастасия</h3>
                         <p class="team-role">Эксперт по лабораторной диагностике</p>
@@ -103,7 +109,10 @@
                     
                     <div class="team-card">
                         <div class="team-photo">
-                            <div class="photo-placeholder">ДМ</div>
+                            <img src="https://psv4.userapi.com/s/v1/d2/bsXVTZrj3ZsgGlbUWmlnIiQeHms6YpcNczzxB7FKggAKu2UHoqHYTxPOaoDsHuSn6w7iaJo80oBUt8zlSa_H-SyqbxEE2F-epZL5Wlhu2ZZ7OpDTjnc9G5cvr2-4sD8vWVEi6d9JHQUU/5451918837596419323.jpg" 
+                                 alt="Моисеев Денис" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="photo-placeholder" style="display: none;">ДМ</div>
                         </div>
                         <h3>Моисеев Денис</h3>
                         <p class="team-role">Технический директор</p>
@@ -112,7 +121,10 @@
                     
                     <div class="team-card">
                         <div class="team-photo">
-                            <div class="photo-placeholder">БШ</div>
+                            <img src="https://psv4.userapi.com/s/v1/d2/XkRm99jzl0eVZopA9MAxtMC2oa7SSShEYfzO1Mdsu6XPtPPT2FteK9DftSJ8v96-7-F8FaGTA4DlHm6KU2KnCZurDUhEwcO-N5BINFNVSUHB4BJJk2HRjAHkQvFFPMw6f4rRbWhtfdtF/5451918837596419340.jpg" 
+                                 alt="Шумейко Богдан" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="photo-placeholder" style="display: none;">БШ</div>
                         </div>
                         <h3>Шумейко Богдан</h3>
                         <p class="team-role">Координатор клиник-партнеров</p>
@@ -123,7 +135,7 @@
         </main>
 
         <footer class="main-footer">
-            <p>&copy; 2024 Мои МедАнализы. Все права защищены.</p>
+            <p>&copy; 2025 Мои МедАнализы. Все права защищены.</p>
             <p>Ваше здоровье — наш приоритет</p>
         </footer>
     </div>
@@ -171,6 +183,33 @@
                 setTimeout(() => {
                     window.location.href = card.getAttribute('href');
                 }, 1000);
+            });
+        });
+
+        // Обработка загрузки фотографий
+        document.addEventListener('DOMContentLoaded', function() {
+            const teamPhotos = document.querySelectorAll('.team-photo img');
+            
+            teamPhotos.forEach(img => {
+                // Проверяем, загрузилось ли изображение
+                if (img.complete) {
+                    if (img.naturalHeight === 0) {
+                        // Если изображение не загрузилось, показываем заглушку
+                        img.style.display = 'none';
+                        const placeholder = img.nextElementSibling;
+                        if (placeholder && placeholder.classList.contains('photo-placeholder')) {
+                            placeholder.style.display = 'flex';
+                        }
+                    }
+                } else {
+                    img.addEventListener('error', function() {
+                        this.style.display = 'none';
+                        const placeholder = this.nextElementSibling;
+                        if (placeholder && placeholder.classList.contains('photo-placeholder')) {
+                            placeholder.style.display = 'flex';
+                        }
+                    });
+                }
             });
         });
     </script>
