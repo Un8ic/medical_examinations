@@ -1,174 +1,245 @@
-/* Стили для контекстного помощника */
-.context-helper-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 10000;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.3s ease;
-}
+// База знаний для контекстного помощника
+window.contextHelperData = {
+    // Общий анализ крови
+    blood_general: {
+        title: "Общий анализ крови",
+        description: "Комплексная оценка основных показателей крови",
+        indicators: {
+            hemoglobin: {
+                name: "Гемоглобин",
+                normal: "Ж: 120-140 г/л, М: 130-160 г/л",
+                low: {
+                    reasons: [
+                        "Железодефицитная анемия",
+                        "Кровопотеря",
+                        "Дефицит витаминов (B12, фолиевая кислота)",
+                        "Хронические заболевания"
+                    ],
+                    recommendations: [
+                        "Консультация гематолога",
+                        "Анализ на ферритин и железо",
+                        "Диета, богатая железом",
+                        "Прием препаратов железа по назначению врача"
+                    ]
+                },
+                high: {
+                    reasons: [
+                        "Обезвоживание",
+                        "Курение",
+                        "Проживание в высокогорье",
+                        "Заболевания легких и сердца"
+                    ],
+                    recommendations: [
+                        "Исключить обезвоживание",
+                        "Консультация терапевта",
+                        "Дополнительное обследование сердечно-сосудистой системы"
+                    ]
+                }
+            },
+            leukocytes: {
+                name: "Лейкоциты",
+                normal: "4.0-9.0 × 10⁹/л",
+                low: {
+                    reasons: [
+                        "Вирусные инфекции",
+                        "Прием некоторых лекарств",
+                        "Аутоиммунные заболевания",
+                        "Заболевания костного мозга"
+                    ],
+                    recommendations: [
+                        "Консультация инфекциониста",
+                        "Повторный анализ через 1-2 недели",
+                        "Иммунограмма при повторных случаях"
+                    ]
+                },
+                high: {
+                    reasons: [
+                        "Бактериальные инфекции",
+                        "Воспалительные процессы",
+                        "Стресс, физические нагрузки",
+                        "Заболевания крови"
+                    ],
+                    recommendations: [
+                        "Консультация терапевта",
+                        "Анализ на С-реактивный белок",
+                        "Выявление очага инфекции"
+                    ]
+                }
+            }
+        }
+    },
 
-.context-helper-content {
-    background: white;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 600px;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
+    // Биохимический анализ крови
+    blood_bio: {
+        title: "Биохимический анализ крови",
+        description: "Оценка функции печени, почек, поджелудочной железы",
+        indicators: {
+            alt: {
+                name: "АЛТ (аланинаминотрансфераза)",
+                normal: "до 41 Ед/л",
+                high: {
+                    reasons: [
+                        "Заболевания печени (гепатит, цирроз)",
+                        "Прием гепатотоксичных препаратов",
+                        "Злоупотребление алкоголем",
+                        "Жировая болезнь печени"
+                    ],
+                    recommendations: [
+                        "Консультация гастроэнтеролога",
+                        "УЗИ печени и желчного пузыря",
+                        "Анализы на вирусные гепатиты",
+                        "Коррекция диеты и образа жизни"
+                    ]
+                }
+            },
+            glucose: {
+                name: "Глюкоза",
+                normal: "3.3-6.1 ммоль/л (натощак)",
+                low: {
+                    reasons: [
+                        "Голодание",
+                        "Передозировка инсулина",
+                        "Заболевания поджелудочной железы",
+                        "Нарушения функции печени"
+                    ],
+                    recommendations: [
+                        "Консультация эндокринолога",
+                        "Анализ на инсулин и С-пептид",
+                        "Регулярное питание",
+                        "Контроль уровня глюкозы"
+                    ]
+                },
+                high: {
+                    reasons: [
+                        "Сахарный диабет",
+                        "Стресс",
+                        "Заболевания поджелудочной железы",
+                        "Эндокринные нарушения"
+                    ],
+                    recommendations: [
+                        "Консультация эндокринолога",
+                        "Анализ на гликированный гемоглобин",
+                        "Тест толерантности к глюкозе",
+                        "Коррекция диеты и образа жизни"
+                    ]
+                }
+            }
+        }
+    },
 
-.context-helper-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    border-bottom: 1px solid #e0e0e0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 12px 12px 0 0;
-}
+    // Гормональные исследования
+    tsh: {
+        title: "ТТГ (тиреотропный гормон)",
+        description: "Основной регулятор функции щитовидной железы",
+        normal: "0.4-4.0 мкМЕ/мл",
+        low: {
+            status: "warning",
+            reasons: [
+                "Гипертиреоз (тиреотоксикоз)",
+                "Прием препаратов тироксина",
+                "Заболевания гипофиза"
+            ],
+            recommendations: [
+                "Консультация эндокринолога",
+                "Анализ на Т4 свободный, Т3",
+                "УЗИ щитовидной железы",
+                "Коррекция дозы препаратов при необходимости"
+            ]
+        },
+        high: {
+            status: "warning",
+            reasons: [
+                "Гипотиреоз",
+                "Аутоиммунный тиреоидит",
+                "Дефицит йода",
+                "Состояние после лечения щитовидной железы"
+            ],
+            recommendations: [
+                "Консультация эндокринолога",
+                "Анализ на антитела к ТПО",
+                "УЗИ щитовидной железы",
+                "Возможна заместительная терапия"
+            ]
+        }
+    },
 
-.context-helper-header h3 {
-    margin: 0;
-    color: white;
-}
+    // Витамины
+    vitamin_d: {
+        title: "Витамин D (25-ОН)",
+        description: "Критически важен для иммунитета, костей и общего здоровья",
+        normal: "30-100 нг/мл",
+        low: {
+            status: "warning",
+            reasons: [
+                "Недостаток солнечного света",
+                "Неадекватное питание",
+                "Заболевания ЖКТ с нарушением всасывания",
+                "Ожирение"
+            ],
+            recommendations: [
+                "Прием препаратов витамина D",
+                "Увеличение времени на солнце",
+                "Питание, богатое витамином D",
+                "Контроль уровня через 3 месяца"
+            ]
+        },
+        high: {
+            status: "critical",
+            reasons: [
+                "Передозировка препаратов витамина D",
+                "Заболевания почек",
+                "Саркоидоз и другие гранулематозные заболевания"
+            ],
+            recommendations: [
+                "Немедленная консультация врача",
+                "Прекращение приема витамина D",
+                "Контроль уровня кальция в крови",
+                "Дополнительное обследование"
+            ]
+        }
+    },
 
-.context-helper-close {
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: white;
-    cursor: pointer;
-    padding: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.context-helper-body {
-    padding: 20px;
-}
-
-.analysis-description {
-    margin-bottom: 20px;
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    border-left: 4px solid var(--primary-color);
-}
-
-.indicators-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.indicator-compact {
-    padding: 15px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.indicator-compact:hover {
-    border-color: var(--primary-color);
-    background: #f8f9fa;
-}
-
-.indicator-compact h5 {
-    margin: 0 0 8px 0;
-    color: var(--text-dark);
-}
-
-.indicator-compact p {
-    margin: 0 0 10px 0;
-    color: var(--text-light);
-}
-
-.btn-details {
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background 0.3s ease;
-}
-
-.btn-details:hover {
-    background: var(--primary-dark);
-}
-
-.indicator-details {
-    margin-bottom: 20px;
-}
-
-.indicator-details h4 {
-    color: var(--text-dark);
-    margin-bottom: 10px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #f0f0f0;
-}
-
-.deviation-section {
-    margin: 15px 0;
-    padding: 15px;
-    background: #fff;
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
-}
-
-.deviation-section h5 {
-    color: var(--primary-color);
-    margin: 0 0 10px 0;
-    font-size: 1rem;
-}
-
-.deviation-section ul {
-    margin: 8px 0;
-    padding-left: 20px;
-}
-
-.deviation-section li {
-    margin-bottom: 5px;
-    color: var(--text-light);
-    line-height: 1.4;
-}
-
-/* Стили для кликабельных элементов анализов */
-.analysis-clickable {
-    cursor: help;
-    border-bottom: 1px dashed var(--primary-color);
-    transition: all 0.3s ease;
-}
-
-.analysis-clickable:hover {
-    background: rgba(74, 144, 226, 0.1);
-    border-bottom-color: var(--primary-dark);
-}
-
-/* Адаптивность для мобильных */
-@media (max-width: 768px) {
-    .context-helper-content {
-        width: 95%;
-        margin: 20px;
+    // Липидный профиль
+    cholesterol: {
+        title: "Липидный профиль",
+        description: "Оценка риска сердечно-сосудистых заболеваний",
+        indicators: {
+            ldl: {
+                name: "ЛПНП (плохой холестерин)",
+                normal: "менее 3.0 ммоль/л",
+                high: {
+                    reasons: [
+                        "Неправильное питание",
+                        "Малоподвижный образ жизни",
+                        "Генетическая предрасположенность",
+                        "Заболевания печени и почек"
+                    ],
+                    recommendations: [
+                        "Коррекция диеты (меньше насыщенных жиров)",
+                        "Регулярная физическая активность",
+                        "Консультация кардиолога",
+                        "Контроль через 3-6 месяцев"
+                    ]
+                }
+            },
+            hdl: {
+                name: "ЛПВП (хороший холестерин)",
+                normal: "более 1.0 ммоль/л (М), более 1.2 ммоль/л (Ж)",
+                low: {
+                    reasons: [
+                        "Курение",
+                        "Ожирение",
+                        "Малоподвижный образ жизни",
+                        "Неправильное питание"
+                    ],
+                    recommendations: [
+                        "Регулярные аэробные нагрузки",
+                        "Питание, богатое омега-3",
+                        "Отказ от курения",
+                        "Контроль веса"
+                    ]
+                }
+            }
+        }
     }
-    
-    .context-helper-body {
-        padding: 15px;
-    }
-    
-    .deviation-section {
-        padding: 10px;
-    }
-}
+};
