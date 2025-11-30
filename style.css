@@ -221,26 +221,6 @@ h1 {
     transform: translateY(-2px);
 }
 
-.btn-outline {
-    background: transparent;
-    border: 1px solid var(--primary-color);
-    color: var(--primary-color);
-    padding: 10px 20px;
-    min-width: auto;
-    width: auto;
-    display: inline-block;
-}
-
-.btn-outline:hover {
-    background: var(--primary-color);
-    color: white;
-}
-
-.btn-outline.active {
-    background: var(--primary-color);
-    color: white;
-}
-
 /* Формы */
 .auth-form {
     margin-bottom: 20px;
@@ -1343,8 +1323,18 @@ h2 {
 
 .comment {
     max-width: 300px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     line-height: 1.4;
+    color: var(--text-light);
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 6px;
+    border-left: 3px solid #e9ecef;
+}
+
+.indicator-row.abnormal .comment {
+    background: #fff5f5;
+    border-left-color: #ff6b6b;
 }
 
 /* Модальное окно */
@@ -1429,6 +1419,7 @@ h2 {
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-size: 0.9rem;
 }
 
 .history-table th {
@@ -1450,8 +1441,14 @@ h2 {
     border-bottom: none;
 }
 
-.history-table tr.abnormal {
+.history-table tr.normal td {
+    background: #f8fff8;
+}
+
+.history-table tr.abnormal td {
     background: #fff5f5;
+    color: #d32f2f;
+    font-weight: 500;
 }
 
 .empty-state {
@@ -1470,7 +1467,7 @@ h2 {
     color: var(--text-dark);
 }
 
-/* Анимации для модального окна */
+/* Анимации для дашборда */
 @keyframes slideDown {
     from {
         opacity: 0;
@@ -1656,6 +1653,12 @@ h2 {
     .chart-container {
         height: 250px;
     }
+    
+    .comment {
+        max-width: 200px;
+        font-size: 0.8rem;
+        padding: 8px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1734,5 +1737,10 @@ h2 {
     
     .chart-container {
         height: 200px;
+    }
+    
+    .comment {
+        max-width: 150px;
+        font-size: 0.75rem;
     }
 }
