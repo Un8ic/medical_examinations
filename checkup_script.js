@@ -191,183 +191,12 @@ const novosibirskClinics = [
     }
 ];
 
-// Класс контекстного помощника
-class ContextHelper {
-    constructor() {
-        this.helper = document.getElementById('context-helper');
-        this.overlay = document.getElementById('helper-overlay');
-        this.title = document.getElementById('helper-title');
-        this.content = document.getElementById('helper-content');
-        this.closeBtn = document.getElementById('helper-close');
-        
-        this.setupEventListeners();
-    }
-
-    setupEventListeners() {
-        this.closeBtn.addEventListener('click', () => this.hide());
-        this.overlay.addEventListener('click', () => this.hide());
-        
-        // Закрытие по ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                this.hide();
-            }
-        });
-    }
-
-    showAnalysisInfo(analysisId) {
-        const analysisData = window.contextHelperData ? window.contextHelperData[analysisId] : null;
-        
-        if (!analysisData) {
-            this.showBasicInfo(analysisId);
-            return;
-        }
-
-        this.title.textContent = analysisData.title;
-        
-        let html = `
-            <div class="helper-section">
-                <p>${analysisData.description}</p>
-            </div>
-        `;
-
-        // Если есть отдельные показатели
-        if (analysisData.indicators) {
-            for (const [key, indicator] of Object.entries(analysisData.indicators)) {
-                html += this.createIndicatorHTML(indicator);
-            }
-        } else {
-            // Если анализ имеет общие нормы
-            if (analysisData.normal) {
-                html += `
-                    <div class="helper-norm">
-                        <p><strong>Нормальные значения:</strong> ${analysisData.normal}</p>
-                    </div>
-                `;
-            }
-            
-            // Отклонения
-            if (analysisData.low) {
-                html += this.createDeviationHTML('Пониженные значения', analysisData.low);
-            }
-            
-            if (analysisData.high) {
-                html += this.createDeviationHTML('Повышенные значения', analysisData.high);
-            }
-        }
-
-        // Общие рекомендации
-        html += `
-            <div class="helper-section">
-                <h4>💡 Общие рекомендации</h4>
-                <ul class="helper-list">
-                    <li>Интерпретируйте результаты вместе с врачом</li>
-                    <li>Учитывайте свои симптомы и историю болезни</li>
-                    <li>Повторяйте анализы в динамике при необходимости</li>
-                    <li>Сообщайте врачу о принимаемых лекарствах</li>
-                </ul>
-            </div>
-        `;
-
-        this.content.innerHTML = html;
-        this.show();
-    }
-
-    createIndicatorHTML(indicator) {
-        return `
-            <div class="helper-section">
-                <h4>${indicator.name}</h4>
-                <div class="helper-norm">
-                    <p><strong>Норма:</strong> ${indicator.normal}</p>
-                </div>
-                ${indicator.low ? this.createDeviationHTML('Понижение', indicator.low) : ''}
-                ${indicator.high ? this.createDeviationHTML('Повышение', indicator.high) : ''}
-            </div>
-        `;
-    }
-
-    createDeviationHTML(title, data) {
-        const statusClass = data.status ? `helper-status ${data.status}` : 'helper-status warning';
-        const statusText = data.status === 'critical' ? 'Требует внимания!' : 
-                          data.status === 'warning' ? 'Внимание' : 'Отклонение';
-        
-        return `
-            <div class="deviation-section">
-                <span class="${statusClass}">${statusText}</span>
-                <h5>${title}</h5>
-                <p><strong>Возможные причины:</strong></p>
-                <ul class="helper-list">
-                    ${data.reasons.map(reason => `<li>${reason}</li>`).join('')}
-                </ul>
-                <p><strong>Рекомендации:</strong></p>
-                <ul class="helper-list">
-                    ${data.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-                </ul>
-            </div>
-        `;
-    }
-
-    showBasicInfo(analysisId) {
-        // Находим данные анализа для отображения базовой информации
-        let analysisInfo = null;
-        Object.values(checkupAnalyses).flat().forEach(analysis => {
-            if (analysis.id === analysisId) {
-                analysisInfo = analysis;
-            }
-        });
-
-        this.title.textContent = analysisInfo ? analysisInfo.name : "Информация об анализе";
-        
-        let content = '';
-        if (analysisInfo) {
-            content = `
-                <div class="helper-section">
-                    <p><strong>Описание:</strong> ${analysisInfo.description}</p>
-                    <p><strong>Детали:</strong> ${analysisInfo.details}</p>
-                </div>
-                <div class="helper-section">
-                    <h4>💡 Общие рекомендации</h4>
-                    <ul class="helper-list">
-                        <li>Консультация с врачом перед сдачей анализа</li>
-                        <li>Соблюдение правил подготовки к исследованию</li>
-                        <li>Интерпретация результатов совместно со специалистом</li>
-                        <li>Учет индивидуальных особенностей и истории болезни</li>
-                    </ul>
-                </div>
-            `;
-        } else {
-            content = `
-                <div class="helper-section">
-                    <p>Подробная информация по этому анализу будет доступна в ближайшее время.</p>
-                    <p>Рекомендуем проконсультироваться с врачом для интерпретации результатов.</p>
-                </div>
-            `;
-        }
-
-        this.content.innerHTML = content;
-        this.show();
-    }
-
-    show() {
-        this.helper.classList.add('active');
-        this.overlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    hide() {
-        this.helper.classList.remove('active');
-        this.overlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-}
-
 // Основная логика чек-листа
 class CheckupChecklist {
     constructor() {
         this.selectedAnalyses = new Set();
         this.selectedClinic = null;
         this.userParams = {};
-        this.contextHelper = new ContextHelper();
         this.init();
     }
 
@@ -508,10 +337,7 @@ class CheckupChecklist {
                     ${analysis.recommended ? 'checked' : ''}
                     data-price="${analysis.price}">
                 <div class="analysis-info">
-                    <div class="analysis-name clickable-indicator" data-analysis="${analysis.id}">
-                        <span class="analysis-indicator indicator-normal"></span>
-                        ${analysis.name}
-                    </div>
+                    <div class="analysis-name">${analysis.name}</div>
                     <div class="analysis-description">${analysis.description}</div>
                     <div class="analysis-details">${analysis.details}</div>
                 </div>
@@ -527,15 +353,6 @@ class CheckupChecklist {
                 this.selectedAnalyses.delete(analysis.id);
             }
             this.updateTotalCost();
-        });
-
-        // Добавляем обработчик для контекстного помощника
-        const analysisName = item.querySelector('.analysis-name');
-        analysisName.addEventListener('click', (e) => {
-            if (e.target.classList.contains('clickable-indicator') || 
-                e.target.classList.contains('analysis-indicator')) {
-                this.contextHelper.showAnalysisInfo(analysis.id);
-            }
         });
 
         if (analysis.recommended) {
