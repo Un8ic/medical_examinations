@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дашборд показателей | Мои МедАнализы</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Уведомления -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <!-- Модальное окно для динамики показателя -->
+    <div id="indicator-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Динамика показателя</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="chart-container">
+                    <canvas id="indicator-chart"></canvas>
+                </div>
+                <div class="history-table-container">
+                    <h3>История измерений</h3>
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Значение</th>
+                                <th>Отклонение от нормы</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body">
+                            <!-- Данные будут заполнены через JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="header-nav">
+                <a href="main.html" class="back-link">← На главную</a>
+                <h1>Дашборд показателей</h1>
+            </div>
+            <p class="tagline">Отслеживание динамики ваших медицинских показателей</p>
+        </header>
+
+        <main class="main-content">
+            <div class="dashboard-controls">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Поиск показателя...">
+                </div>
+                <div class="filter-buttons">
+                    <button class="btn btn-outline active" data-filter="all">Все показатели</button>
+                    <button class="btn btn-outline" data-filter="abnormal">Вне нормы</button>
+                    <button class="btn btn-outline" data-filter="improving">Улучшающиеся</button>
+                    <button class="btn btn-outline" data-filter="worsening">Ухудшающиеся</button>
+                </div>
+            </div>
+
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-indicators">0</div>
+                    <div class="stat-label">Всего показателей</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="normal-indicators">0</div>
+                    <div class="stat-label">В норме</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value abnormal" id="abnormal-indicators">0</div>
+                    <div class="stat-label">Вне нормы</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="tracked-time">0</div>
+                    <div class="stat-label">Месяцев отслеживания</div>
+                </div>
+            </div>
+
+            <div class="indicators-table-container">
+                <table class="indicators-table">
+                    <thead>
+                        <tr>
+                            <th>Название показателя</th>
+                            <th>Результат</th>
+                            <th>Предыдущий результат</th>
+                            <th>Единицы</th>
+                            <th>Референсные значения</th>
+                            <th>Комментарий</th>
+                        </tr>
+                    </thead>
+                    <tbody id="indicators-table-body">
+                        <!-- Данные будут заполнены через JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="empty-state" id="empty-state" style="display: none;">
+                <div class="empty-icon">📊</div>
+                <h3>Показатели не найдены</h3>
+                <p>Попробуйте изменить параметры поиска или фильтрации</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="dashboard_data.js"></script>
+    <script src="dashboard_script.js"></script>
+</body>
+</html>
