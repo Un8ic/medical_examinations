@@ -33,8 +33,26 @@ class Dashboard {
     }
 
     isValueNormal(indicator, value) {
-        const [min, max] = indicator.reference.split(' - ').map(Number);
-        return value >= min && value <= max;
+        // Для показателей с текстовым reference (например, прогестерон)
+        if (indicator.reference.includes('зависят') || indicator.reference.includes('фаза')) {
+            return true; // Не помечаем как аномальные, так как нужна дополнительная информация
+        }
+        
+        // Для показателей с верхней границей только (например, холестерин)
+        if (indicator.reference.startsWith('<')) {
+            const maxRef = parseFloat(indicator.reference.replace('<', '').trim());
+            return value <= maxRef;
+        }
+        
+        // Для стандартных диапазонов
+        const rangeMatch = indicator.reference.match(/(\d+[,.]?\d*)\s*-\s*(\d+[,.]?\d*)/);
+        if (rangeMatch) {
+            const minRef = parseFloat(rangeMatch[1].replace(',', '.'));
+            const maxRef = parseFloat(rangeMatch[2].replace(',', '.'));
+            return value >= minRef && value <= maxRef;
+        }
+        
+        return true; // Если не можем определить, считаем нормальным
     }
 
     calculateTrend(indicator) {
@@ -204,6 +222,25 @@ class Dashboard {
         document.getElementById('indicator-modal').style.display = 'block';
     }
 
+    parseReference(indicator) {
+        // Для показателей с верхней границей только
+        if (indicator.reference.startsWith('<')) {
+            const maxRef = parseFloat(indicator.reference.replace('<', '').trim());
+            return { minRef: null, maxRef: maxRef };
+        }
+        
+        // Для стандартных диапазонов
+        const rangeMatch = indicator.reference.match(/(\d+[,.]?\d*)\s*-\s*(\d+[,.]?\d*)/);
+        if (rangeMatch) {
+            const minRef = parseFloat(rangeMatch[1].replace(',', '.'));
+            const maxRef = parseFloat(rangeMatch[2].replace(',', '.'));
+            return { minRef, maxRef };
+        }
+        
+        // Для текстовых reference
+        return { minRef: null, maxRef: null };
+    }
+
     renderChart(indicator) {
         const ctx = document.getElementById('indicator-chart').getContext('2d');
         
@@ -216,41 +253,50 @@ class Dashboard {
         const values = indicator.history.map(h => h.value).reverse();
 
         // Парсим референсные значения
-        const [minRef, maxRef] = indicator.reference.split(' - ').map(Number);
+        const { minRef, maxRef } = this.parseReference(indicator);
+
+        const datasets = [
+            {
+                label: indicator.name,
+                data: values,
+                borderColor: '#4a90e2',
+                backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }
+        ];
+
+        // Добавляем линии референсных значений, если они есть
+        if (maxRef !== null) {
+            datasets.push({
+                label: 'Верхняя граница нормы',
+                data: Array(values.length).fill(maxRef),
+                borderColor: '#ff6b6b',
+                borderWidth: 1,
+                borderDash: [5, 5],
+                fill: false,
+                pointRadius: 0
+            });
+        }
+
+        if (minRef !== null) {
+            datasets.push({
+                label: 'Нижняя граница нормы',
+                data: Array(values.length).fill(minRef),
+                borderColor: '#ff6b6b',
+                borderWidth: 1,
+                borderDash: [5, 5],
+                fill: false,
+                pointRadius: 0
+            });
+        }
 
         this.chart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: dates,
-                datasets: [
-                    {
-                        label: indicator.name,
-                        data: values,
-                        borderColor: '#4a90e2',
-                        backgroundColor: 'rgba(74, 144, 226, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
-                    },
-                    {
-                        label: 'Верхняя граница нормы',
-                        data: Array(values.length).fill(maxRef),
-                        borderColor: '#ff6b6b',
-                        borderWidth: 1,
-                        borderDash: [5, 5],
-                        fill: false,
-                        pointRadius: 0
-                    },
-                    {
-                        label: 'Нижняя граница нормы',
-                        data: Array(values.length).fill(minRef),
-                        borderColor: '#ff6b6b',
-                        borderWidth: 1,
-                        borderDash: [5, 5],
-                        fill: false,
-                        pointRadius: 0
-                    }
-                ]
+                datasets: datasets
             },
             options: {
                 responsive: true,
@@ -266,7 +312,7 @@ class Dashboard {
                 },
                 scales: {
                     y: {
-                        beginAtZero: minRef > 0 ? false : true,
+                        beginAtZero: minRef !== null ? minRef > 0 ? false : true : false,
                         title: {
                             display: true,
                             text: indicator.unit
@@ -285,7 +331,7 @@ class Dashboard {
 
     renderHistoryTable(indicator) {
         const tbody = document.getElementById('history-table-body');
-        const [minRef, maxRef] = indicator.reference.split(' - ').map(Number);
+        const { minRef, maxRef } = this.parseReference(indicator);
 
         tbody.innerHTML = indicator.history.map(measurement => {
             const isNormal = this.isValueNormal(indicator, measurement.value);
@@ -293,10 +339,12 @@ class Dashboard {
             let deviation = 'В норме';
             
             if (!isNormal) {
-                if (measurement.value < minRef) {
+                if (minRef !== null && measurement.value < minRef) {
                     deviation = `Ниже нормы на ${(minRef - measurement.value).toFixed(1)}`;
-                } else {
+                } else if (maxRef !== null && measurement.value > maxRef) {
                     deviation = `Выше нормы на ${(measurement.value - maxRef).toFixed(1)}`;
+                } else {
+                    deviation = 'Вне референсного диапазона';
                 }
             }
 
