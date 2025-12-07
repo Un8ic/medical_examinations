@@ -484,7 +484,7 @@ class Dashboard {
 
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
-    new Dashboard();
+    window.dashboardInstance = new Dashboard();
 });
 
 // Добавляем стили для новых элементов
