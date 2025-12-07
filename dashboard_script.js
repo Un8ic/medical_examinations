@@ -1,3 +1,4 @@
+// dashboard_script.js
 class Dashboard {
     constructor() {
         this.indicators = [];
@@ -5,6 +6,7 @@ class Dashboard {
         this.currentFilter = 'all';
         this.searchTerm = '';
         this.chart = null;
+        this.contextHelper = null;
         this.init();
     }
 
@@ -13,6 +15,9 @@ class Dashboard {
         this.setupEventListeners();
         this.renderDashboard();
         this.showNotification('Дашборд загружен. Нажмите на название показателя для просмотра динамики.', 'info');
+        
+        // Инициализируем контекстный помощник после загрузки данных
+        this.contextHelper = new ContextHelper();
     }
 
     loadIndicators() {
@@ -83,7 +88,7 @@ class Dashboard {
             this.applyFilters();
         });
 
-        // Модальное окно
+        // Модальное окно деталей показателя
         document.querySelector('.modal-close').addEventListener('click', () => {
             this.closeModal();
         });
@@ -91,6 +96,16 @@ class Dashboard {
         document.getElementById('indicator-modal').addEventListener('click', (e) => {
             if (e.target.id === 'indicator-modal') {
                 this.closeModal();
+            }
+        });
+        
+        // Закрытие по клавише Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.closeModal();
+                if (this.contextHelper) {
+                    this.contextHelper.closeHelp();
+                }
             }
         });
     }
@@ -117,6 +132,11 @@ class Dashboard {
         });
 
         this.renderDashboard();
+        
+        // Перерисовываем значки помощи после фильтрации
+        if (this.contextHelper) {
+            this.contextHelper.addHelpIcons();
+        }
     }
 
     renderDashboard() {
@@ -156,15 +176,17 @@ class Dashboard {
         tbody.innerHTML = this.filteredIndicators.map(indicator => {
             const trendIcon = this.getTrendIcon(indicator.trend);
             const statusClass = indicator.isNormal ? 'normal' : 'abnormal';
+            const statusText = indicator.isNormal ? 'В норме' : 'Вне нормы';
             
             return `
                 <tr class="indicator-row ${statusClass}" data-indicator-id="${indicator.id}">
                     <td class="indicator-name">
                         <button class="indicator-link">${indicator.name}</button>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
                         ${trendIcon}
                     </td>
                     <td class="current-result">
-                        <span class="value">${indicator.lastResult.value}</span>
+                        <span class="value ${statusClass}">${indicator.lastResult.value}</span>
                         <span class="date">${this.formatDate(indicator.lastResult.date)}</span>
                     </td>
                     <td class="previous-result">
@@ -197,7 +219,16 @@ class Dashboard {
             decreasing: '📉',
             stable: '➡️'
         };
-        return `<span class="trend-icon">${icons[trend]}</span>`;
+        return `<span class="trend-icon" title="${this.getTrendText(trend)}">${icons[trend]}</span>`;
+    }
+    
+    getTrendText(trend) {
+        const texts = {
+            increasing: 'Показатель растет',
+            decreasing: 'Показатель снижается',
+            stable: 'Показатель стабилен'
+        };
+        return texts[trend] || '';
     }
 
     formatDate(dateString) {
@@ -263,7 +294,19 @@ class Dashboard {
                 backgroundColor: 'rgba(74, 144, 226, 0.1)',
                 borderWidth: 2,
                 fill: true,
-                tension: 0.4
+                tension: 0.4,
+                pointBackgroundColor: values.map((val, index) => {
+                    if (maxRef !== null && val > maxRef) return '#ff6b6b';
+                    if (minRef !== null && val < minRef) return '#ff6b6b';
+                    return '#4a90e2';
+                }),
+                pointBorderColor: values.map((val, index) => {
+                    if (maxRef !== null && val > maxRef) return '#ff6b6b';
+                    if (minRef !== null && val < minRef) return '#ff6b6b';
+                    return '#4a90e2';
+                }),
+                pointRadius: 6,
+                pointHoverRadius: 8
             }
         ];
 
@@ -300,14 +343,40 @@ class Dashboard {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     title: {
                         display: true,
-                        text: `Динамика показателя (${indicator.unit})`
+                        text: `Динамика показателя (${indicator.unit})`,
+                        font: {
+                            size: 16,
+                            family: 'Montserrat, sans-serif'
+                        }
                     },
                     tooltip: {
                         mode: 'index',
-                        intersect: false
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.parsed.y.toFixed(2);
+                                if (indicator.unit) {
+                                    label += ` ${indicator.unit}`;
+                                }
+                                return label;
+                            }
+                        }
+                    },
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 12
+                            }
+                        }
                     }
                 },
                 scales: {
@@ -315,15 +384,35 @@ class Dashboard {
                         beginAtZero: minRef !== null ? minRef > 0 ? false : true : false,
                         title: {
                             display: true,
-                            text: indicator.unit
+                            text: indicator.unit,
+                            font: {
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
                         }
                     },
                     x: {
                         title: {
                             display: true,
-                            text: 'Дата измерения'
+                            text: 'Дата измерения',
+                            font: {
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
                         }
                     }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                animation: {
+                    duration: 750,
+                    easing: 'easeInOutQuart'
                 }
             }
         });
@@ -340,9 +429,11 @@ class Dashboard {
             
             if (!isNormal) {
                 if (minRef !== null && measurement.value < minRef) {
-                    deviation = `Ниже нормы на ${(minRef - measurement.value).toFixed(1)}`;
+                    const diff = (minRef - measurement.value).toFixed(2);
+                    deviation = `Ниже нормы на ${diff} ${indicator.unit}`;
                 } else if (maxRef !== null && measurement.value > maxRef) {
-                    deviation = `Выше нормы на ${(measurement.value - maxRef).toFixed(1)}`;
+                    const diff = (measurement.value - maxRef).toFixed(2);
+                    deviation = `Выше нормы на ${diff} ${indicator.unit}`;
                 } else {
                     deviation = 'Вне референсного диапазона';
                 }
@@ -351,8 +442,8 @@ class Dashboard {
             return `
                 <tr class="${statusClass}">
                     <td>${this.formatDate(measurement.date)}</td>
-                    <td>${measurement.value}</td>
-                    <td>${deviation}</td>
+                    <td><strong>${measurement.value} ${indicator.unit}</strong></td>
+                    <td><span class="deviation ${statusClass}">${deviation}</span></td>
                 </tr>
             `;
         }).join('');
@@ -395,3 +486,125 @@ class Dashboard {
 document.addEventListener('DOMContentLoaded', () => {
     new Dashboard();
 });
+
+// Добавляем стили для новых элементов
+const style = document.createElement('style');
+style.textContent = `
+    .status-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 8px;
+        vertical-align: middle;
+    }
+    
+    .status-badge.normal {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+    }
+    
+    .status-badge.abnormal {
+        background-color: #ffebee;
+        color: #c62828;
+    }
+    
+    .value.abnormal {
+        color: #c62828;
+        font-weight: bold;
+    }
+    
+    .value.normal {
+        color: #2e7d32;
+        font-weight: bold;
+    }
+    
+    .trend-icon {
+        margin-left: 8px;
+        cursor: help;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+    
+    .deviation {
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+    }
+    
+    .deviation.normal {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+    }
+    
+    .deviation.abnormal {
+        background-color: #ffebee;
+        color: #c62828;
+    }
+    
+    .indicator-row:hover .indicator-link {
+        text-decoration: underline;
+    }
+    
+    .indicator-link {
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 0;
+        text-align: left;
+        font-family: 'Montserrat', sans-serif;
+    }
+    
+    .no-data {
+        color: #9e9e9e;
+        font-style: italic;
+        font-size: 0.9rem;
+    }
+    
+    /* Анимация для появления строк таблицы */
+    @keyframes fadeInRow {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .indicator-row {
+        animation: fadeInRow 0.3s ease-out;
+    }
+    
+    /* Улучшенный внешний вид комментариев */
+    .comment {
+        max-width: 300px;
+        font-size: 0.85rem;
+        line-height: 1.4;
+        color: var(--text-light);
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 12px;
+        border-radius: 8px;
+        border-left: 4px solid #dee2e6;
+        position: relative;
+    }
+    
+    .indicator-row.abnormal .comment {
+        background: linear-gradient(135deg, #fff5f5 0%, #ffeaea 100%);
+        border-left-color: #ff6b6b;
+    }
+    
+    .comment::before {
+        content: '💡';
+        position: absolute;
+        left: -25px;
+        top: 12px;
+        font-size: 1rem;
+    }
+`;
+document.head.appendChild(style);
