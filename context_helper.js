@@ -2,6 +2,7 @@
 class ContextHelper {
     constructor() {
         this.helpData = this.getHelpData();
+        this.helpIconsAdded = new Set(); // Трекер для добавленных иконок
         this.setupContextHelp();
     }
 
@@ -334,43 +335,85 @@ class ContextHelper {
     }
 
     setupContextHelp() {
-        // Добавляем значки вопросов к названиям показателей
-        this.addHelpIcons();
         this.setupHelpModal();
+        
+        // Используем MutationObserver для отслеживания изменений в таблице
+        this.setupTableObserver();
     }
 
-    addHelpIcons() {
-        // Ждем загрузки таблицы
-        setTimeout(() => {
-            const rows = document.querySelectorAll('.indicator-row');
-            rows.forEach(row => {
-                const indicatorId = row.dataset.indicatorId;
-                if (indicatorId && this.helpData[indicatorId]) {
-                    const nameCell = row.querySelector('.indicator-name');
-                    if (nameCell) {
-                        const helpIcon = document.createElement('button');
-                        helpIcon.className = 'help-icon';
-                        helpIcon.innerHTML = '?';
-                        helpIcon.title = 'Объяснение показателя';
-                        helpIcon.dataset.indicatorId = indicatorId;
-                        
-                        // Вставляем после названия показателя
-                        const link = nameCell.querySelector('.indicator-link');
-                        if (link) {
-                            link.parentNode.insertBefore(helpIcon, link.nextSibling);
+    setupTableObserver() {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'childList') {
+                    // Проверяем, были ли добавлены новые строки
+                    mutation.addedNodes.forEach((node) => {
+                        if (node.nodeType === 1 && node.classList && node.classList.contains('indicator-row')) {
+                            const indicatorId = node.dataset.indicatorId;
+                            if (indicatorId) {
+                                this.addHelpIconToRow(node, indicatorId);
+                            }
                         }
-                        
-                        helpIcon.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            this.showHelp(indicatorId);
-                        });
-                    }
+                    });
                 }
             });
-        }, 500);
+        });
+
+        // Начинаем наблюдение за таблицей
+        const tableBody = document.getElementById('indicators-table-body');
+        if (tableBody) {
+            observer.observe(tableBody, { childList: true });
+            
+            // Инициализируем иконки для существующих строк
+            setTimeout(() => {
+                this.initializeHelpIcons();
+            }, 100);
+        }
+    }
+
+    initializeHelpIcons() {
+        const rows = document.querySelectorAll('.indicator-row');
+        rows.forEach(row => {
+            const indicatorId = row.dataset.indicatorId;
+            if (indicatorId && this.helpData[indicatorId]) {
+                this.addHelpIconToRow(row, indicatorId);
+            }
+        });
+    }
+
+    addHelpIconToRow(row, indicatorId) {
+        // Проверяем, не добавлена ли уже иконка
+        if (row.querySelector('.help-icon')) {
+            return; // Иконка уже есть, пропускаем
+        }
+
+        const nameCell = row.querySelector('.indicator-name');
+        if (nameCell && this.helpData[indicatorId]) {
+            const helpIcon = document.createElement('button');
+            helpIcon.className = 'help-icon';
+            helpIcon.innerHTML = '?';
+            helpIcon.title = 'Объяснение показателя';
+            helpIcon.dataset.indicatorId = indicatorId;
+            
+            // Вставляем после названия показателя
+            const link = nameCell.querySelector('.indicator-link');
+            if (link) {
+                // Вставляем иконку после кнопки с названием
+                link.insertAdjacentElement('afterend', helpIcon);
+            }
+            
+            helpIcon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.showHelp(indicatorId);
+            });
+        }
     }
 
     setupHelpModal() {
+        // Проверяем, не существует ли уже модальное окно
+        if (document.getElementById('help-modal')) {
+            return;
+        }
+
         // Создаем модальное окно для помощи
         const modalHTML = `
             <div id="help-modal" class="modal">
