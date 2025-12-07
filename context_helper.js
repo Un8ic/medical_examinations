@@ -3,6 +3,7 @@ class ContextHelper {
     constructor() {
         this.helpData = this.getHelpData();
         this.setupContextHelp();
+        this.hasIconsAdded = false; // Флаг, чтобы значки добавлялись только один раз
     }
 
     getHelpData() {
@@ -171,6 +172,24 @@ class ContextHelper {
                         'Контроль уровня каждые 3-6 месяцев',
                         'Прием с витамином K2 для лучшего усвоения'
                     ]
+                },
+                high: {
+                    causes: [
+                        'Передозировка препаратов витамина D',
+                        'Некоторые заболевания (саркоидоз)'
+                    ],
+                    symptoms: [
+                        'Тошнота, рвота',
+                        'Запоры',
+                        'Слабость',
+                        'Потеря аппетита',
+                        'Почечные камни'
+                    ],
+                    recommendations: [
+                        'Прекращение приема витамина D',
+                        'Консультация эндокринолога',
+                        'Контроль уровня кальция в крови'
+                    ]
                 }
             },
             'tsh': {
@@ -183,6 +202,13 @@ class ContextHelper {
                         'Прием гормонов щитовидной железы',
                         'Беременность (первый триместр)',
                         'Заболевания гипофиза'
+                    ],
+                    symptoms: [
+                        'Учащенное сердцебиение',
+                        'Потеря веса',
+                        'Тремор рук',
+                        'Потливость',
+                        'Нервозность'
                     ],
                     recommendations: [
                         'Консультация эндокринолога',
@@ -198,6 +224,13 @@ class ContextHelper {
                         'Дефицит йода',
                         'Состояние после операции на щитовидной железе'
                     ],
+                    symptoms: [
+                        'Усталость, слабость',
+                        'Увеличение веса',
+                        'Сухость кожи',
+                        'Выпадение волос',
+                        'Депрессия'
+                    ],
                     recommendations: [
                         'Консультация эндокринолога',
                         'Заместительная гормональная терапия',
@@ -210,6 +243,27 @@ class ContextHelper {
                 title: 'Глюкоза',
                 description: 'Уровень сахара в крови. Основной источник энергии для клеток.',
                 normal: '3.9-6.1 ммоль/л',
+                low: {
+                    causes: [
+                        'Передозировка инсулина или сахароснижающих препаратов',
+                        'Длительное голодание',
+                        'Инсулинома',
+                        'Заболевания печени'
+                    ],
+                    symptoms: [
+                        'Потливость',
+                        'Дрожь',
+                        'Головокружение',
+                        'Слабость',
+                        'Спутанность сознания'
+                    ],
+                    recommendations: [
+                        'Регулярное питание',
+                        'Избегание длительных перерывов между едой',
+                        'Консультация эндокринолога',
+                        'Наличие быстрых углеводов при симптомах гипогликемии'
+                    ]
+                },
                 high: {
                     causes: [
                         'Сахарный диабет',
@@ -218,6 +272,12 @@ class ContextHelper {
                         'Прием некоторых лекарств',
                         'Заболевания поджелудочной железы'
                     ],
+                    symptoms: [
+                        'Сильная жажда',
+                        'Частое мочеиспускание',
+                        'Усталость',
+                        'Затуманенное зрение'
+                    ],
                     recommendations: [
                         'Консультация эндокринолога',
                         'Тест на толерантность к глюкозе',
@@ -225,27 +285,32 @@ class ContextHelper {
                         'Диета с низким гликемическим индексом',
                         'Регулярная физическая активность'
                     ]
-                },
-                low: {
-                    causes: [
-                        'Передозировка инсулина или сахароснижающих препаратов',
-                        'Длительное голодание',
-                        'Инсулинома',
-                        'Заболевания печени'
-                    ],
-                    recommendations: [
-                        'Регулярное питание',
-                        'Избегание длительных перерывов между едой',
-                        'Консультация эндокринолога',
-                        'Наличие быстрых углеводов при симптомах гипогликемии'
-                    ]
                 }
             },
             'hba1c': {
                 title: 'Гликированный гемоглобин (HbA1c)',
                 description: 'Показывает средний уровень сахара в крови за последние 2-3 месяца.',
                 normal: '4.8-6.0%',
+                low: {
+                    causes: [
+                        'Частые гипогликемии',
+                        'Гемолитическая анемия',
+                        'Заболевания почек',
+                        'Беременность'
+                    ],
+                    recommendations: [
+                        'Консультация эндокринолога',
+                        'Контроль уровня глюкозы',
+                        'Анализ на гемоглобин и ретикулоциты'
+                    ]
+                },
                 high: {
+                    causes: [
+                        'Сахарный диабет',
+                        'Преддиабет',
+                        'Синдром Кушинга',
+                        'Хронические заболевания почек'
+                    ],
                     interpretation: [
                         '6.0-6.4% - повышенный риск развития диабета',
                         '≥6.5% - диагностический критерий сахарного диабета'
@@ -264,6 +329,13 @@ class ContextHelper {
                 description: 'Жироподобное вещество, необходимое для строительства клеток, но при избытке вредное для сосудов.',
                 normal: '<5.2 ммоль/л',
                 high: {
+                    causes: [
+                        'Неправильное питание',
+                        'Малоподвижный образ жизни',
+                        'Ожирение',
+                        'Наследственность',
+                        'Заболевания печени'
+                    ],
                     risks: [
                         'Атеросклероз',
                         'Ишемическая болезнь сердца',
@@ -277,12 +349,39 @@ class ContextHelper {
                         'Контроль веса',
                         'Консультация кардиолога'
                     ]
+                },
+                low: {
+                    causes: [
+                        'Гипертиреоз',
+                        'Заболевания печени',
+                        'Нарушение всасывания',
+                        'Недоедание'
+                    ],
+                    recommendations: [
+                        'Консультация терапевта',
+                        'Анализ функции щитовидной железы',
+                        'Проверка функции печени',
+                        'Сбалансированное питание'
+                    ]
                 }
             },
             'creatinine': {
                 title: 'Креатинин',
                 description: 'Продукт распада креатина в мышцах. Показывает функцию почек.',
                 normal: '53-97 мкмоль/л',
+                low: {
+                    causes: [
+                        'Снижение мышечной массы',
+                        'Беременность',
+                        'Недостаточное питание',
+                        'Заболевания печени'
+                    ],
+                    recommendations: [
+                        'Оценка мышечной массы',
+                        'Консультация диетолога',
+                        'Адекватное потребление белка'
+                    ]
+                },
                 high: {
                     causes: [
                         'Почечная недостаточность',
@@ -291,6 +390,13 @@ class ContextHelper {
                         'Прием некоторых лекарств',
                         'Заболевания сердца'
                     ],
+                    symptoms: [
+                        'Усталость',
+                        'Отеки',
+                        'Одышка',
+                        'Тошнота',
+                        'Изменения в мочеиспускании'
+                    ],
                     recommendations: [
                         'Консультация нефролога',
                         'Анализ на скорость клубочковой фильтрации (СКФ)',
@@ -298,17 +404,143 @@ class ContextHelper {
                         'Достаточное потребление жидкости',
                         'Ограничение белка в питании при необходимости'
                     ]
-                },
-                low: {
+                }
+            },
+            'homocysteine': {
+                title: 'Гомоцистеин',
+                description: 'Аминокислота, повышенный уровень которой связан с риском сердечно-сосудистых заболеваний.',
+                normal: '5-15 мкмоль/л',
+                high: {
                     causes: [
-                        'Снижение мышечной массы',
-                        'Беременность',
-                        'Недостаточное питание'
+                        'Дефицит витаминов B6, B12, фолиевой кислоты',
+                        'Курение',
+                        'Чрезмерное употребление кофе',
+                        'Заболевания почек',
+                        'Наследственность'
+                    ],
+                    risks: [
+                        'Атеросклероз',
+                        'Тромбоз',
+                        'Инфаркт миокарда',
+                        'Инсульт',
+                        'Осложнения при беременности'
                     ],
                     recommendations: [
-                        'Оценка мышечной массы',
-                        'Консультация диетолога',
-                        'Адекватное потребление белка'
+                        'Прием витаминов группы B',
+                        'Отказ от курения',
+                        'Ограничение кофе',
+                        'Диета, богатая зелеными овощами',
+                        'Консультация кардиолога'
+                    ]
+                }
+            },
+            'ca125': {
+                title: 'СА-125',
+                description: 'Онкомаркер, используемый преимущественно для мониторинга рака яичников.',
+                normal: '0-35 Ед/мл',
+                high: {
+                    causes: [
+                        'Рак яичников',
+                        'Эндометриоз',
+                        'Миома матки',
+                        'Воспалительные заболевания органов малого таза',
+                        'Беременность',
+                        'Менструация'
+                    ],
+                    recommendations: [
+                        'Консультация гинеколога',
+                        'УЗИ органов малого таза',
+                        'Повторный анализ через 1-2 месяца',
+                        'Исключение неонкологических причин'
+                    ]
+                }
+            },
+            'progesterone': {
+                title: 'Прогестерон',
+                description: 'Женский половой гормон, важный для менструального цикла и беременности.',
+                normal: 'Зависит от фазы цикла',
+                interpretation: [
+                    'Фолликулярная фаза: 0,3-2,2 нмоль/л',
+                    'Овуляция: 0,5-9,4 нмоль/л',
+                    'Лютеиновая фаза: 7,0-56,6 нмоль/л',
+                    'Постменопауза: < 0,6 нмоль/л'
+                ],
+                low: {
+                    causes: [
+                        'Недостаточность желтого тела',
+                        'Дисфункция яичников',
+                        'Стресс',
+                        'Чрезмерные физические нагрузки'
+                    ],
+                    symptoms: [
+                        'Нерегулярные менструации',
+                        'Бесплодие',
+                        'Выкидыши на ранних сроках',
+                        'Предменструальный синдром'
+                    ],
+                    recommendations: [
+                        'Консультация гинеколога-эндокринолога',
+                        'Анализ в правильную фазу цикла',
+                        'УЗИ органов малого таза',
+                        'Гормональная терапия при необходимости'
+                    ]
+                },
+                high: {
+                    causes: [
+                        'Беременность',
+                        'Кисты яичников',
+                        'Опухоли яичников',
+                        'Заболевания надпочечников'
+                    ],
+                    recommendations: [
+                        'Тест на беременность',
+                        'УЗИ органов малого таза',
+                        'Консультация гинеколога'
+                    ]
+                }
+            },
+            'estradiol': {
+                title: 'Эстрадиол',
+                description: 'Основной женский половой гормон, важный для репродуктивной функции.',
+                normal: 'Зависит от фазы цикла',
+                interpretation: [
+                    'Фолликулярная фаза: 68-1269 пмоль/л',
+                    'Овуляция: 131-1655 пмоль/л',
+                    'Лютеиновая фаза: 91-861 пмоль/л',
+                    'Постменопауза: < 73 пмоль/л'
+                ],
+                low: {
+                    causes: [
+                        'Дисфункция яичников',
+                        'Менопауза',
+                        'Чрезмерные физические нагрузки',
+                        'Низкий вес тела'
+                    ],
+                    symptoms: [
+                        'Приливы жара',
+                        'Сухость влагалища',
+                        'Перепады настроения',
+                        'Нарушения менструального цикла'
+                    ],
+                    recommendations: [
+                        'Консультация гинеколога-эндокринолога',
+                        'Гормональная терапия при необходимости',
+                        'Сбалансированное питание',
+                        'Контроль веса'
+                    ]
+                },
+                high: {
+                    causes: [
+                        'Ожирение',
+                        'Опухоли яичников',
+                        'Цирроз печени',
+                        'Прием эстрогенсодержащих препаратов'
+                    ],
+                    recommendations: [
+                        'Консультация гинеколога',
+                        'УЗИ органов малого таза',
+                        'Контроль веса',
+                        'Исследование функции печени'
                     ]
                 }
             },
@@ -316,11 +548,19 @@ class ContextHelper {
                 title: 'С-реактивный белок (СРБ)',
                 description: 'Маркер воспаления в организме. Повышается при инфекциях, травмах, воспалительных заболеваниях.',
                 normal: '0-5 мг/л',
+                interpretation: [
+                    '3-10 мг/л - незначительное воспаление (возможны вялотекущие процессы)',
+                    '10-40 мг/л - умеренное воспаление (вирусные инфекции)',
+                    '>40 мг/л - сильное воспаление (бактериальные инфекции)'
+                ],
                 high: {
-                    interpretation: [
-                        '3-10 мг/л - незначительное воспаление (возможны вялотекущие процессы)',
-                        '10-40 мг/л - умеренное воспаление (вирусные инфекции)',
-                        '>40 мг/л - сильное воспаление (бактериальные инфекции)'
+                    causes: [
+                        'Бактериальные инфекции',
+                        'Вирусные инфекции',
+                        'Воспалительные заболевания (артрит, колит)',
+                        'Травмы, операции',
+                        'Ожоги',
+                        'Инфаркт миокарда'
                     ],
                     recommendations: [
                         'Консультация терапевта',
@@ -334,41 +574,85 @@ class ContextHelper {
     }
 
     setupContextHelp() {
-        // Добавляем значки вопросов к названиям показателей
-        this.addHelpIcons();
         this.setupHelpModal();
+        
+        // Наблюдаем за изменениями в таблице
+        this.observeTableChanges();
+        
+        // Первоначальное добавление значков
+        this.addHelpIcons();
+    }
+
+    observeTableChanges() {
+        // Наблюдаем за изменениями в таблице показателей
+        const tableBody = document.getElementById('indicators-table-body');
+        if (tableBody) {
+            const observer = new MutationObserver(() => {
+                if (!this.hasIconsAdded) {
+                    this.addHelpIcons();
+                }
+            });
+            
+            observer.observe(tableBody, { childList: true, subtree: true });
+        }
     }
 
     addHelpIcons() {
+        // Проверяем, не добавлены ли уже значки
+        if (this.hasIconsAdded) return;
+        
         // Ждем загрузки таблицы
         setTimeout(() => {
             const rows = document.querySelectorAll('.indicator-row');
             rows.forEach(row => {
                 const indicatorId = row.dataset.indicatorId;
-                if (indicatorId && this.helpData[indicatorId]) {
-                    const nameCell = row.querySelector('.indicator-name');
-                    if (nameCell) {
-                        const helpIcon = document.createElement('button');
-                        helpIcon.className = 'help-icon';
-                        helpIcon.innerHTML = '?';
-                        helpIcon.title = 'Объяснение показателя';
-                        helpIcon.dataset.indicatorId = indicatorId;
-                        
-                        // Вставляем после названия показателя
-                        const link = nameCell.querySelector('.indicator-link');
-                        if (link) {
-                            link.parentNode.insertBefore(helpIcon, link.nextSibling);
+                if (indicatorId) {
+                    // Проверяем, есть ли уже значок помощи
+                    const existingIcon = row.querySelector('.help-icon');
+                    if (existingIcon) {
+                        existingIcon.remove(); // Удаляем старый значок
+                    }
+                    
+                    // Добавляем новый значок только если есть данные для этого показателя
+                    if (this.helpData[indicatorId]) {
+                        const nameCell = row.querySelector('.indicator-name');
+                        if (nameCell) {
+                            const helpIcon = this.createHelpIcon(indicatorId);
+                            
+                            // Вставляем после названия показателя, но перед значком тренда
+                            const link = nameCell.querySelector('.indicator-link');
+                            const trendIcon = nameCell.querySelector('.trend-icon');
+                            
+                            if (link) {
+                                if (trendIcon) {
+                                    nameCell.insertBefore(helpIcon, trendIcon);
+                                } else {
+                                    link.parentNode.insertBefore(helpIcon, link.nextSibling);
+                                }
+                            }
                         }
-                        
-                        helpIcon.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            this.showHelp(indicatorId);
-                        });
                     }
                 }
             });
-        }, 500);
+            
+            this.hasIconsAdded = true;
+        }, 100);
+    }
+
+    createHelpIcon(indicatorId) {
+        const helpIcon = document.createElement('button');
+        helpIcon.className = 'help-icon';
+        helpIcon.innerHTML = '?';
+        helpIcon.title = 'Объяснение показателя';
+        helpIcon.dataset.indicatorId = indicatorId;
+        
+        helpIcon.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.showHelp(indicatorId);
+        });
+        
+        return helpIcon;
     }
 
     setupHelpModal() {
@@ -390,6 +674,11 @@ class ContextHelper {
                             <div class="help-section">
                                 <h4>Нормальные значения:</h4>
                                 <div class="normal-range" id="help-normal"></div>
+                            </div>
+                            
+                            <div class="help-section" id="interpretation-section" style="display: none;">
+                                <h4>Интерпретация результатов:</h4>
+                                <ul id="help-interpretation"></ul>
                             </div>
                             
                             <div class="help-section" id="low-section" style="display: none;">
@@ -422,11 +711,6 @@ class ContextHelper {
                                     <h5>Рекомендации:</h5>
                                     <ul id="high-recommendations"></ul>
                                 </div>
-                            </div>
-                            
-                            <div class="help-section" id="interpretation-section" style="display: none;">
-                                <h4>Интерпретация результатов:</h4>
-                                <ul id="help-interpretation"></ul>
                             </div>
                             
                             <div class="help-section" id="risks-section" style="display: none;">
@@ -474,22 +758,26 @@ class ContextHelper {
 
     showHelp(indicatorId) {
         const data = this.helpData[indicatorId];
-        if (!data) return;
+        if (!data) {
+            console.log('Нет данных для показателя:', indicatorId);
+            return;
+        }
 
         const modal = document.getElementById('help-modal');
         if (!modal) return;
 
-        // Получаем данные показателя
-        const dashboard = window.dashboardInstance || 
-                        (window.dashboardData?.indicators ? { indicators: window.dashboardData.indicators } : null);
-        
-        const indicator = dashboard?.indicators?.find(i => i.id === indicatorId);
-        
         // Заголовок
         document.getElementById('help-title').textContent = `Объяснение: ${data.title}`;
         document.getElementById('help-subtitle').textContent = data.title;
         document.getElementById('help-description').textContent = data.description;
-        document.getElementById('help-normal').textContent = data.normal;
+        
+        // Отображаем нормальные значения
+        if (data.normal) {
+            document.getElementById('help-normal').textContent = data.normal;
+            document.getElementById('help-normal').style.display = 'inline-block';
+        } else {
+            document.getElementById('help-normal').style.display = 'none';
+        }
 
         // Скрываем все секции
         document.getElementById('low-section').style.display = 'none';
@@ -507,47 +795,32 @@ class ContextHelper {
         this.clearList('help-interpretation');
         this.clearList('help-risks');
 
-        // Показываем актуальную информацию в зависимости от значения показателя
-        if (indicator) {
-            const currentValue = indicator.history?.[0]?.value;
+        // Всегда показываем интерпретацию, если она есть
+        if (data.interpretation) {
+            this.populateList('help-interpretation', data.interpretation);
+            document.getElementById('interpretation-section').style.display = 'block';
+        }
+
+        // Показываем информацию о пониженных значениях, если она есть
+        if (data.low) {
+            this.populateSection('low', data.low);
+        }
+
+        // Показываем информацию о повышенных значениях, если она есть
+        if (data.high) {
+            this.populateSection('high', data.high);
             
-            if (currentValue !== undefined) {
-                // Определяем, высокое или низкое значение
-                const rangeMatch = data.normal.match(/(\d+[,.]?\d*)\s*-\s*(\d+[,.]?\d*)/);
-                if (rangeMatch) {
-                    const min = parseFloat(rangeMatch[1].replace(',', '.'));
-                    const max = parseFloat(rangeMatch[2].replace(',', '.'));
-                    
-                    if (currentValue < min && data.low) {
-                        this.populateSection('low', data.low);
-                    } else if (currentValue > max && data.high) {
-                        this.populateSection('high', data.high);
-                    }
-                } else if (data.normal.startsWith('<')) {
-                    const max = parseFloat(data.normal.replace('<', '').trim());
-                    if (currentValue > max && data.high) {
-                        this.populateSection('high', data.high);
-                    }
-                }
+            // Показываем риски отдельно, если они есть
+            if (data.high.risks) {
+                this.populateList('help-risks', data.high.risks);
+                document.getElementById('risks-section').style.display = 'block';
             }
         }
 
-        // Всегда показываем дополнительные секции, если они есть
-        if (data.high?.interpretation) {
-            this.populateList('help-interpretation', data.high.interpretation);
-            document.getElementById('interpretation-section').style.display = 'block';
-        }
-        
-        if (data.high?.risks) {
-            this.populateList('help-risks', data.high.risks);
-            document.getElementById('risks-section').style.display = 'block';
-        }
-
-        // Если не определили отклонение, показываем общую информацию
-        if (document.getElementById('low-section').style.display !== 'block' && 
-            document.getElementById('high-section').style.display !== 'block') {
-            if (data.low) this.populateSection('low', data.low);
-            if (data.high) this.populateSection('high', data.high);
+        // Если есть только информация о повышенных значениях (например, для CA-125),
+        // но нет о пониженных, все равно показываем секцию с повышенными значениями
+        if (data.high && !data.low) {
+            document.getElementById('high-section').style.display = 'block';
         }
 
         // Показываем модальное окно
@@ -559,8 +832,13 @@ class ContextHelper {
         if (section) {
             section.style.display = 'block';
             
-            if (data.causes) this.populateList(`${type}-causes`, data.causes);
-            if (data.symptoms) {
+            if (data.causes && data.causes.length > 0) {
+                this.populateList(`${type}-causes`, data.causes);
+            } else {
+                document.querySelector(`#${type}-section .causes`).style.display = 'none';
+            }
+            
+            if (data.symptoms && data.symptoms.length > 0) {
                 this.populateList(`${type}-symptoms`, data.symptoms);
                 const symptomsContainer = document.getElementById(`${type}-symptoms-container`);
                 if (symptomsContainer) symptomsContainer.style.display = 'block';
@@ -568,7 +846,12 @@ class ContextHelper {
                 const symptomsContainer = document.getElementById(`${type}-symptoms-container`);
                 if (symptomsContainer) symptomsContainer.style.display = 'none';
             }
-            if (data.recommendations) this.populateList(`${type}-recommendations`, data.recommendations);
+            
+            if (data.recommendations && data.recommendations.length > 0) {
+                this.populateList(`${type}-recommendations`, data.recommendations);
+            } else {
+                document.querySelector(`#${type}-section .recommendations`).style.display = 'none';
+            }
         }
     }
 
@@ -600,5 +883,8 @@ class ContextHelper {
 
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
-    new ContextHelper();
+    // Ждем немного, чтобы таблица успела загрузиться
+    setTimeout(() => {
+        new ContextHelper();
+    }, 300);
 });
