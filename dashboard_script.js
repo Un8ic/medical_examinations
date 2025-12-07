@@ -12,7 +12,7 @@ class Dashboard {
         this.loadIndicators();
         this.setupEventListeners();
         this.renderDashboard();
-        this.showNotification('Дашборд загружен. Нажмите на ❔ рядом с показателем для получения подробного объяснения.', 'info');
+        this.showNotification('Дашборд загружен. Нажмите на название показателя для просмотра динамики.', 'info');
     }
 
     loadIndicators() {
@@ -25,7 +25,6 @@ class Dashboard {
                 lastResult,
                 previousResult,
                 isNormal: this.isValueNormal(indicator, lastResult.value),
-                deviationType: this.getDeviationType(indicator, lastResult.value),
                 trend: this.calculateTrend(indicator)
             };
         });
@@ -33,19 +32,16 @@ class Dashboard {
         this.filteredIndicators = [...this.indicators];
     }
 
-    getDeviationType(indicator, value) {
-        // Для показателей с текстовым reference
-        if (!indicator.reference || 
-            indicator.reference.includes('зависят') || 
-            indicator.reference.includes('фаза') ||
-            indicator.reference.includes('зависят от фазы')) {
-            return 'unknown';
+    isValueNormal(indicator, value) {
+        // Для показателей с текстовым reference (например, прогестерон)
+        if (indicator.reference.includes('зависят') || indicator.reference.includes('фаза')) {
+            return true; // Не помечаем как аномальные, так как нужна дополнительная информация
         }
         
-        // Для показателей с верхней границей только
+        // Для показателей с верхней границей только (например, холестерин)
         if (indicator.reference.startsWith('<')) {
             const maxRef = parseFloat(indicator.reference.replace('<', '').trim());
-            return value > maxRef ? 'high' : 'normal';
+            return value <= maxRef;
         }
         
         // Для стандартных диапазонов
@@ -53,18 +49,10 @@ class Dashboard {
         if (rangeMatch) {
             const minRef = parseFloat(rangeMatch[1].replace(',', '.'));
             const maxRef = parseFloat(rangeMatch[2].replace(',', '.'));
-            
-            if (value < minRef) return 'low';
-            if (value > maxRef) return 'high';
-            return 'normal';
+            return value >= minRef && value <= maxRef;
         }
         
-        return 'unknown';
-    }
-
-    isValueNormal(indicator, value) {
-        const deviationType = this.getDeviationType(indicator, value);
-        return deviationType === 'normal' || deviationType === 'unknown';
+        return true; // Если не можем определить, считаем нормальным
     }
 
     calculateTrend(indicator) {
@@ -95,28 +83,14 @@ class Dashboard {
             this.applyFilters();
         });
 
-        // Модальные окна
-        const indicatorModalClose = document.querySelector('#indicator-modal .modal-close');
-        const contextHelpModalClose = document.querySelector('#context-help-modal .modal-close');
-        
-        if (indicatorModalClose) {
-            indicatorModalClose.addEventListener('click', () => this.closeIndicatorModal());
-        }
-        
-        if (contextHelpModalClose) {
-            contextHelpModalClose.addEventListener('click', () => this.closeContextHelpModal());
-        }
-
-        // Закрытие модальных окон по клику на фон
-        document.getElementById('indicator-modal').addEventListener('click', (e) => {
-            if (e.target.id === 'indicator-modal') {
-                this.closeIndicatorModal();
-            }
+        // Модальное окно
+        document.querySelector('.modal-close').addEventListener('click', () => {
+            this.closeModal();
         });
 
-        document.getElementById('context-help-modal').addEventListener('click', (e) => {
-            if (e.target.id === 'context-help-modal') {
-                this.closeContextHelpModal();
+        document.getElementById('indicator-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'indicator-modal') {
+                this.closeModal();
             }
         });
     }
@@ -182,11 +156,6 @@ class Dashboard {
         tbody.innerHTML = this.filteredIndicators.map(indicator => {
             const trendIcon = this.getTrendIcon(indicator.trend);
             const statusClass = indicator.isNormal ? 'normal' : 'abnormal';
-            const helpIcon = indicator.contextHelp ? 
-                `<button class="help-btn" data-indicator-id="${indicator.id}" title="Получить объяснение">
-                    <i class="fas fa-question-circle"></i>
-                </button>` : 
-                '';
             
             return `
                 <tr class="indicator-row ${statusClass}" data-indicator-id="${indicator.id}">
@@ -207,12 +176,11 @@ class Dashboard {
                     <td class="unit">${indicator.unit}</td>
                     <td class="reference">${indicator.reference}</td>
                     <td class="comment">${indicator.comment || '—'}</td>
-                    <td class="help-cell">${helpIcon}</td>
                 </tr>
             `;
         }).join('');
 
-        // Обработчики для клика по названиям показателей
+        // Добавляем обработчики для клика по названиям показателей
         tbody.querySelectorAll('.indicator-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -221,206 +189,20 @@ class Dashboard {
                 this.showIndicatorDetails(indicatorId);
             });
         });
-
-        // Обработчики для кнопок помощи
-        tbody.querySelectorAll('.help-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const indicatorId = btn.dataset.indicatorId;
-                this.showContextHelp(indicatorId);
-            });
-        });
     }
 
     getTrendIcon(trend) {
         const icons = {
-            increasing: '<span class="trend-icon increasing">📈</span>',
-            decreasing: '<span class="trend-icon decreasing">📉</span>',
-            stable: '<span class="trend-icon stable">➡️</span>'
+            increasing: '📈',
+            decreasing: '📉',
+            stable: '➡️'
         };
-        return icons[trend] || icons.stable;
+        return `<span class="trend-icon">${icons[trend]}</span>`;
     }
 
     formatDate(dateString) {
-        try {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('ru-RU', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-        } catch (e) {
-            return dateString;
-        }
-    }
-
-    showContextHelp(indicatorId) {
-        const indicator = this.indicators.find(ind => ind.id === indicatorId);
-        if (!indicator) {
-            this.showNotification('Показатель не найден', 'warning');
-            return;
-        }
-
-        const currentValue = indicator.lastResult.value;
-        const deviationType = indicator.deviationType;
-        
-        // Заголовок
-        document.getElementById('context-help-title').textContent = `Помощник: ${indicator.name}`;
-        document.getElementById('help-indicator-name').textContent = indicator.name;
-        document.getElementById('help-current-value').innerHTML = `
-            Текущее значение: <strong>${currentValue} ${indicator.unit}</strong>
-        `;
-        document.getElementById('help-reference-value').innerHTML = `
-            Референсные значения: <strong>${indicator.reference}</strong>
-        `;
-
-        // Статус
-        let statusText = '';
-        let statusClass = '';
-        if (deviationType === 'normal') {
-            statusText = 'В пределах нормы';
-            statusClass = 'normal';
-        } else if (deviationType === 'low') {
-            statusText = 'Ниже нормы';
-            statusClass = 'low';
-        } else if (deviationType === 'high') {
-            statusText = 'Выше нормы';
-            statusClass = 'high';
-        } else {
-            statusText = 'Требует индивидуальной оценки';
-            statusClass = 'unknown';
-        }
-        
-        const statusBadge = document.getElementById('help-status');
-        statusBadge.textContent = statusText;
-        statusBadge.className = `status-badge ${statusClass}`;
-
-        // Выбираем соответствующие данные для контекстной помощи
-        let helpData = null;
-        
-        // Проверяем, есть ли контекстная помощь для показателя
-        if (indicator.contextHelp) {
-            if (deviationType === 'low' && indicator.contextHelp.low) {
-                helpData = indicator.contextHelp.low;
-            } else if ((deviationType === 'high' || deviationType === 'unknown') && indicator.contextHelp.high) {
-                helpData = indicator.contextHelp.high;
-            } else if (deviationType === 'normal' && indicator.contextHelp.normal) {
-                helpData = indicator.contextHelp.normal;
-            } else if (indicator.contextHelp.general) {
-                helpData = indicator.contextHelp.general;
-            }
-        }
-
-        // Если нет контекстной помощи, создаем базовую информацию
-        if (!helpData) {
-            helpData = this.generateBasicHelpData(indicator, deviationType);
-        }
-
-        // Заполняем секции
-        const explanationElement = document.getElementById('help-explanation');
-        if (explanationElement && helpData.explanation) {
-            explanationElement.textContent = helpData.explanation;
-        }
-        
-        const causesList = document.getElementById('help-causes');
-        if (causesList && helpData.possibleCauses && helpData.possibleCauses.length > 0) {
-            causesList.innerHTML = helpData.possibleCauses.map(cause => 
-                `<li><i class="fas fa-chevron-right"></i> ${cause}</li>`
-            ).join('');
-        }
-        
-        const recommendationsList = document.getElementById('help-recommendations');
-        if (recommendationsList && helpData.recommendations && helpData.recommendations.length > 0) {
-            recommendationsList.innerHTML = helpData.recommendations.map(rec => 
-                `<li><i class="fas fa-check-circle"></i> ${rec}</li>`
-            ).join('');
-        }
-
-        // Показываем/скрываем секции в зависимости от наличия данных
-        const sections = {
-            'explanation': helpData.explanation,
-            'causes': helpData.possibleCauses && helpData.possibleCauses.length > 0,
-            'recommendations': helpData.recommendations && helpData.recommendations.length > 0
-        };
-        
-        for (const [section, hasContent] of Object.entries(sections)) {
-            const element = document.getElementById(`help-${section}-section`);
-            if (element) {
-                element.style.display = hasContent ? 'block' : 'none';
-            }
-        }
-
-        // Показываем модальное окно
-        document.getElementById('context-help-modal').style.display = 'block';
-    }
-
-    generateBasicHelpData(indicator, deviationType) {
-        let explanation = '';
-        let possibleCauses = [];
-        let recommendations = [];
-
-        switch (deviationType) {
-            case 'normal':
-                explanation = `Показатель ${indicator.name} находится в пределах референсных значений. Это хороший результат, указывающий на нормальное функционирование соответствующей системы организма.`;
-                possibleCauses = ['Нормальное состояние здоровья'];
-                recommendations = [
-                    'Продолжать вести здоровый образ жизни',
-                    'Регулярно контролировать показатель (раз в 6-12 месяцев)',
-                    'Поддерживать сбалансированное питание'
-                ];
-                break;
-                
-            case 'low':
-                explanation = `Показатель ${indicator.name} ниже референсных значений. Это может указывать на недостаточность функции или дефицит.`;
-                possibleCauses = [
-                    'Дефицит питательных веществ',
-                    'Нарушение синтеза или метаболизма',
-                    'Повышенные потери или расход',
-                    'Врожденные или приобретенные нарушения'
-                ];
-                recommendations = [
-                    'Проконсультироваться с врачом для уточнения диагноза',
-                    'Сдать дополнительные анализы по назначению врача',
-                    'Рассмотреть изменение диеты или образа жизни',
-                    'Повторить анализ через 1-3 месяца'
-                ];
-                break;
-                
-            case 'high':
-                explanation = `Показатель ${indicator.name} выше референсных значений. Это может указывать на чрезмерную активность, избыток или патологический процесс.`;
-                possibleCauses = [
-                    'Избыточное поступление или синтез',
-                    'Нарушение выведения или метаболизма',
-                    'Воспалительный или патологический процесс',
-                    'Прием некоторых лекарственных препаратов'
-                ];
-                recommendations = [
-                    'Немедленно обратиться к врачу для диагностики',
-                    'Исключить временные факторы (стресс, физическая нагрузка)',
-                    'Сдать дополнительные анализы для уточнения причины',
-                    'Рассмотреть возможность коррекции образа жизни'
-                ];
-                break;
-                
-            case 'unknown':
-            default:
-                explanation = indicator.comment || `Показатель ${indicator.name} требует индивидуальной интерпретации врачом, так как референсные значения зависят от многих факторов.`;
-                possibleCauses = ['Требуется индивидуальная оценка врачом'];
-                recommendations = [
-                    'Обязательно проконсультироваться с врачом',
-                    'Предоставить врачу полную историю болезни',
-                    'Учесть возраст, пол, фазу цикла (если применимо)',
-                    'Рассмотреть сдачу анализов в динамике'
-                ];
-                break;
-        }
-
-        return {
-            explanation,
-            possibleCauses,
-            recommendations
-        };
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ru-RU');
     }
 
     showIndicatorDetails(indicatorId) {
@@ -479,14 +261,9 @@ class Dashboard {
                 data: values,
                 borderColor: '#4a90e2',
                 backgroundColor: 'rgba(74, 144, 226, 0.1)',
-                borderWidth: 3,
+                borderWidth: 2,
                 fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#4a90e2',
-                pointBorderColor: '#ffffff',
-                pointBorderWidth: 2,
-                pointRadius: 6,
-                pointHoverRadius: 8
+                tension: 0.4
             }
         ];
 
@@ -496,7 +273,7 @@ class Dashboard {
                 label: 'Верхняя граница нормы',
                 data: Array(values.length).fill(maxRef),
                 borderColor: '#ff6b6b',
-                borderWidth: 2,
+                borderWidth: 1,
                 borderDash: [5, 5],
                 fill: false,
                 pointRadius: 0
@@ -508,7 +285,7 @@ class Dashboard {
                 label: 'Нижняя граница нормы',
                 data: Array(values.length).fill(minRef),
                 borderColor: '#ff6b6b',
-                borderWidth: 2,
+                borderWidth: 1,
                 borderDash: [5, 5],
                 fill: false,
                 pointRadius: 0
@@ -523,31 +300,14 @@ class Dashboard {
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            font: {
-                                size: 14,
-                                family: "'Montserrat', sans-serif"
-                            },
-                            padding: 20
-                        }
+                    title: {
+                        display: true,
+                        text: `Динамика показателя (${indicator.unit})`
                     },
                     tooltip: {
                         mode: 'index',
-                        intersect: false,
-                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                        titleFont: {
-                            size: 14,
-                            family: "'Montserrat', sans-serif"
-                        },
-                        bodyFont: {
-                            size: 14
-                        },
-                        padding: 12,
-                        cornerRadius: 6
+                        intersect: false
                     }
                 },
                 scales: {
@@ -555,39 +315,15 @@ class Dashboard {
                         beginAtZero: minRef !== null ? minRef > 0 ? false : true : false,
                         title: {
                             display: true,
-                            text: indicator.unit,
-                            font: {
-                                size: 14,
-                                weight: 'bold',
-                                family: "'Montserrat', sans-serif"
-                            }
-                        },
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.1)'
+                            text: indicator.unit
                         }
                     },
                     x: {
                         title: {
                             display: true,
-                            text: 'Дата измерения',
-                            font: {
-                                size: 14,
-                                weight: 'bold',
-                                family: "'Montserrat', sans-serif"
-                            }
-                        },
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
+                            text: 'Дата измерения'
                         }
                     }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                },
-                animation: {
-                    duration: 1000,
-                    easing: 'easeInOutQuart'
                 }
             }
         });
@@ -604,11 +340,9 @@ class Dashboard {
             
             if (!isNormal) {
                 if (minRef !== null && measurement.value < minRef) {
-                    const diff = minRef - measurement.value;
-                    deviation = `Ниже нормы на ${diff.toFixed(indicator.unit.includes('%') ? 1 : 2)} ${indicator.unit}`;
+                    deviation = `Ниже нормы на ${(minRef - measurement.value).toFixed(1)}`;
                 } else if (maxRef !== null && measurement.value > maxRef) {
-                    const diff = measurement.value - maxRef;
-                    deviation = `Выше нормы на ${diff.toFixed(indicator.unit.includes('%') ? 1 : 2)} ${indicator.unit}`;
+                    deviation = `Выше нормы на ${(measurement.value - maxRef).toFixed(1)}`;
                 } else {
                     deviation = 'Вне референсного диапазона';
                 }
@@ -617,18 +351,14 @@ class Dashboard {
             return `
                 <tr class="${statusClass}">
                     <td>${this.formatDate(measurement.date)}</td>
-                    <td><strong>${measurement.value}</strong> ${indicator.unit}</td>
+                    <td>${measurement.value}</td>
                     <td>${deviation}</td>
                 </tr>
             `;
         }).join('');
     }
 
-    closeContextHelpModal() {
-        document.getElementById('context-help-modal').style.display = 'none';
-    }
-
-    closeIndicatorModal() {
+    closeModal() {
         document.getElementById('indicator-modal').style.display = 'none';
         if (this.chart) {
             this.chart.destroy();
@@ -647,65 +377,21 @@ class Dashboard {
         `;
         
         const container = document.getElementById('notification-container');
-        if (container) {
-            container.appendChild(notification);
-            
-            // Автоматическое закрытие через 5 секунд
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 5000);
-            
-            // Закрытие по клику на крестик
-            notification.querySelector('.notification-close').addEventListener('click', () => {
+        container.appendChild(notification);
+        
+        setTimeout(() => {
+            if (notification.parentNode) {
                 notification.remove();
-            });
-        }
+            }
+        }, 5000);
+        
+        notification.querySelector('.notification-close').addEventListener('click', () => {
+            notification.remove();
+        });
     }
 }
 
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
-    const dashboard = new Dashboard();
-    
-    // Добавляем глобальные обработчики клавиш для закрытия модальных окон
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            const indicatorModal = document.getElementById('indicator-modal');
-            const contextHelpModal = document.getElementById('context-help-modal');
-            
-            if (indicatorModal.style.display === 'block') {
-                dashboard.closeIndicatorModal();
-            } else if (contextHelpModal.style.display === 'block') {
-                dashboard.closeContextHelpModal();
-            }
-        }
-    });
-    
-    // Показываем подсказку о контекстном помощнике при первом посещении
-    const hasSeenHelpHint = localStorage.getItem('hasSeenHelpHint');
-    if (!hasSeenHelpHint) {
-        setTimeout(() => {
-            dashboard.showNotification(
-                '💡 Совет: Нажмите на значок вопроса ❔ рядом с любым показателем, чтобы получить подробное объяснение с возможными причинами и рекомендациями.',
-                'info'
-            );
-            localStorage.setItem('hasSeenHelpHint', 'true');
-        }, 2000);
-    }
+    new Dashboard();
 });
-
-// Вспомогательные функции для работы с числами
-function parseNumber(value) {
-    if (typeof value === 'number') return value;
-    if (typeof value === 'string') {
-        return parseFloat(value.replace(',', '.'));
-    }
-    return 0;
-}
-
-// Экспорт класса для возможного использования в других модулях
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = Dashboard;
-}
