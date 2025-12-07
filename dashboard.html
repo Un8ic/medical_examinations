@@ -42,6 +42,75 @@
         </div>
     </div>
 
+    <!-- Модальное окно контекстного помощника -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="help-title">Контекстный помощник</h2>
+                <button class="modal-close help-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="help-content">
+                    <div class="help-section">
+                        <h3 id="help-subtitle">Название показателя</h3>
+                        <p id="help-description" class="help-description"></p>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h4>Нормальные значения:</h4>
+                        <div class="normal-range" id="help-normal"></div>
+                    </div>
+                    
+                    <div class="help-section" id="low-section" style="display: none;">
+                        <h4 class="section-title low">При пониженных значениях:</h4>
+                        <div class="causes">
+                            <h5>Возможные причины:</h5>
+                            <ul id="low-causes"></ul>
+                        </div>
+                        <div class="symptoms" id="low-symptoms-container">
+                            <h5>Возможные симптомы:</h5>
+                            <ul id="low-symptoms"></ul>
+                        </div>
+                        <div class="recommendations">
+                            <h5>Рекомендации:</h5>
+                            <ul id="low-recommendations"></ul>
+                        </div>
+                    </div>
+                    
+                    <div class="help-section" id="high-section" style="display: none;">
+                        <h4 class="section-title high">При повышенных значениях:</h4>
+                        <div class="causes">
+                            <h5>Возможные причины:</h5>
+                            <ul id="high-causes"></ul>
+                        </div>
+                        <div class="symptoms" id="high-symptoms-container">
+                            <h5>Возможные симптомы:</h5>
+                            <ul id="high-symptoms"></ul>
+                        </div>
+                        <div class="recommendations">
+                            <h5>Рекомендации:</h5>
+                            <ul id="high-recommendations"></ul>
+                        </div>
+                    </div>
+                    
+                    <div class="help-section" id="interpretation-section" style="display: none;">
+                        <h4>Интерпретация результатов:</h4>
+                        <ul id="help-interpretation"></ul>
+                    </div>
+                    
+                    <div class="help-section" id="risks-section" style="display: none;">
+                        <h4>Возможные риски:</h4>
+                        <ul id="help-risks"></ul>
+                    </div>
+                    
+                    <div class="help-note">
+                        <p><strong>Важно:</strong> Данная информация носит справочный характер. Для точной диагностики и лечения обратитесь к врачу.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <header>
             <div class="header-nav">
@@ -110,6 +179,7 @@
     </div>
 
     <script src="dashboard_data.js"></script>
+    <script src="context_helper.js"></script>
     <script src="dashboard_script.js"></script>
 </body>
 </html>
