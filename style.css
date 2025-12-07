@@ -1292,155 +1292,6 @@ h2 {
     color: var(--primary-dark);
 }
 
-/* Стили для контекстного помощника */
-.help-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-    background: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    font-size: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-left: 8px;
-    transition: all 0.3s ease;
-}
-
-.help-icon:hover {
-    background: #357abd;
-    transform: scale(1.1);
-}
-
-.help-content {
-    max-height: 70vh;
-    overflow-y: auto;
-    padding-right: 10px;
-}
-
-.help-section {
-    margin-bottom: 25px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.help-section:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-}
-
-.help-section h3 {
-    color: var(--text-dark);
-    margin-bottom: 15px;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.help-section h4 {
-    color: var(--text-dark);
-    margin-bottom: 12px;
-    font-weight: 600;
-}
-
-.help-section h5 {
-    color: var(--text-light);
-    margin: 10px 0 8px 0;
-    font-weight: 500;
-}
-
-.help-description {
-    font-size: 1.05rem;
-    line-height: 1.6;
-    color: var(--text-dark);
-    margin-bottom: 20px;
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 4px solid var(--primary-color);
-}
-
-.normal-range {
-    display: inline-block;
-    background: #e8f5e9;
-    color: #2e7d32;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 0.95rem;
-}
-
-.section-title.low {
-    color: #2196f3;
-}
-
-.section-title.high {
-    color: #f44336;
-}
-
-.help-section ul {
-    margin: 0;
-    padding-left: 20px;
-}
-
-.help-section li {
-    margin-bottom: 8px;
-    line-height: 1.5;
-    color: var(--text-dark);
-}
-
-.help-section li:last-child {
-    margin-bottom: 0;
-}
-
-.help-note {
-    background: #fff3cd;
-    border-left: 4px solid #ffc107;
-    padding: 15px;
-    border-radius: 6px;
-    margin-top: 25px;
-}
-
-.help-note p {
-    margin: 0;
-    color: #856404;
-    font-size: 0.9rem;
-    line-height: 1.5;
-}
-
-/* Стили для списков контекстного помощника */
-.causes li {
-    color: #d32f2f;
-}
-
-.symptoms li {
-    color: #f57c00;
-}
-
-.recommendations li {
-    color: #388e3c;
-}
-
-/* Кастомизация скроллбара */
-.help-content::-webkit-scrollbar {
-    width: 6px;
-}
-
-.help-content::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-}
-
-.help-content::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 10px;
-}
-
-.help-content::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-
 .trend-icon {
     font-size: 0.9rem;
 }
@@ -1486,11 +1337,196 @@ h2 {
     border-left-color: #ff6b6b;
 }
 
+/* Стили для контекстного помощника */
+.help-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    top: -2px;
+}
+
+.help-icon:hover {
+    background: #357abd;
+    transform: scale(1.1);
+}
+
+.help-modal-content {
+    max-width: 700px;
+    margin: 2% auto;
+}
+
+#help-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+}
+
+#help-modal-close:hover {
+    color: #333;
+}
+
+.help-content {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.help-section {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.help-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.help-section h3 {
+    color: var(--text-dark);
+    margin-bottom: 15px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+}
+
+.help-section h4 {
+    color: var(--text-dark);
+    margin-bottom: 12px;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.help-section h5 {
+    color: var(--text-light);
+    margin: 15px 0 8px 0;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.help-description {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.normal-range {
+    display: inline-block;
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-top: 5px;
+}
+
+.section-title.low {
+    color: #2196f3;
+}
+
+.section-title.high {
+    color: #f44336;
+}
+
+.help-section ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.help-section li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+    color: var(--text-dark);
+    position: relative;
+    padding-left: 5px;
+}
+
+.help-section li:last-child {
+    margin-bottom: 0;
+}
+
+.help-note {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 25px;
+}
+
+.help-note p {
+    margin: 0;
+    color: #856404;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Стили для списков */
+.causes li {
+    color: #d32f2f;
+    list-style-type: disc;
+}
+
+.symptoms li {
+    color: #f57c00;
+    list-style-type: circle;
+}
+
+.recommendations li {
+    color: #388e3c;
+    list-style-type: square;
+}
+
+/* Кастомизация скроллбара */
+.help-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.help-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.help-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.help-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 /* Модальное окно */
 .modal {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 1001;
     left: 0;
     top: 0;
     width: 100%;
@@ -1540,6 +1576,7 @@ h2 {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: color 0.3s ease;
 }
 
 .modal-close:hover {
@@ -1795,6 +1832,12 @@ h2 {
         margin: 5% auto;
     }
     
+    .help-modal-content {
+        width: 95%;
+        margin: 5% auto;
+        max-width: none;
+    }
+    
     .modal-body {
         padding: 20px;
     }
@@ -1809,16 +1852,17 @@ h2 {
         padding: 8px;
     }
     
-    /* Адаптивность контекстного помощника */
-    .help-content {
-        max-height: 60vh;
+    /* Адаптивность для контекстного помощника */
+    .help-modal-content {
+        max-width: 95%;
     }
     
-    .help-icon {
-        width: 18px;
-        height: 18px;
-        font-size: 10px;
-        margin-left: 6px;
+    .help-section h3 {
+        font-size: 1.3rem;
+    }
+    
+    .help-section h4 {
+        font-size: 1.1rem;
     }
     
     .help-description {
@@ -1826,9 +1870,10 @@ h2 {
         padding: 12px;
     }
     
-    .normal-range {
-        padding: 6px 12px;
-        font-size: 0.85rem;
+    .help-icon {
+        width: 18px;
+        height: 18px;
+        font-size: 11px;
     }
 }
 
@@ -1915,30 +1960,20 @@ h2 {
         font-size: 0.75rem;
     }
     
-    /* Адаптивность контекстного помощника для очень маленьких экранов */
+    .help-modal-content {
+        width: 98%;
+        margin: 2% auto;
+    }
+    
+    .modal-header {
+        padding: 15px;
+    }
+    
+    .modal-body {
+        padding: 15px;
+    }
+    
     .help-content {
-        max-height: 50vh;
-    }
-    
-    .help-section {
-        margin-bottom: 20px;
-        padding-bottom: 15px;
-    }
-    
-    .help-section h4 {
-        font-size: 1.1rem;
-    }
-    
-    .help-section h5 {
-        font-size: 0.95rem;
-    }
-    
-    .help-section li {
-        font-size: 0.9rem;
-        margin-bottom: 6px;
-    }
-    
-    .help-note p {
-        font-size: 0.8rem;
+        padding-right: 5px;
     }
 }
