@@ -2,7 +2,6 @@
 class ContextHelper {
     constructor() {
         this.helpData = this.getHelpData();
-        this.helpIconsAdded = new Set(); // Трекер для добавленных иконок
         this.setupContextHelp();
     }
 
@@ -335,92 +334,51 @@ class ContextHelper {
     }
 
     setupContextHelp() {
+        // Добавляем значки вопросов к названиям показателей
+        this.addHelpIcons();
         this.setupHelpModal();
-        
-        // Используем MutationObserver для отслеживания изменений в таблице
-        this.setupTableObserver();
     }
 
-    setupTableObserver() {
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'childList') {
-                    // Проверяем, были ли добавлены новые строки
-                    mutation.addedNodes.forEach((node) => {
-                        if (node.nodeType === 1 && node.classList && node.classList.contains('indicator-row')) {
-                            const indicatorId = node.dataset.indicatorId;
-                            if (indicatorId) {
-                                this.addHelpIconToRow(node, indicatorId);
-                            }
+    addHelpIcons() {
+        // Ждем загрузки таблицы
+        setTimeout(() => {
+            const rows = document.querySelectorAll('.indicator-row');
+            rows.forEach(row => {
+                const indicatorId = row.dataset.indicatorId;
+                if (indicatorId && this.helpData[indicatorId]) {
+                    const nameCell = row.querySelector('.indicator-name');
+                    if (nameCell) {
+                        const helpIcon = document.createElement('button');
+                        helpIcon.className = 'help-icon';
+                        helpIcon.innerHTML = '?';
+                        helpIcon.title = 'Объяснение показателя';
+                        helpIcon.dataset.indicatorId = indicatorId;
+                        
+                        // Вставляем после названия показателя
+                        const link = nameCell.querySelector('.indicator-link');
+                        if (link) {
+                            link.parentNode.insertBefore(helpIcon, link.nextSibling);
                         }
-                    });
+                        
+                        helpIcon.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            this.showHelp(indicatorId);
+                        });
+                    }
                 }
             });
-        });
-
-        // Начинаем наблюдение за таблицей
-        const tableBody = document.getElementById('indicators-table-body');
-        if (tableBody) {
-            observer.observe(tableBody, { childList: true });
-            
-            // Инициализируем иконки для существующих строк
-            setTimeout(() => {
-                this.initializeHelpIcons();
-            }, 100);
-        }
-    }
-
-    initializeHelpIcons() {
-        const rows = document.querySelectorAll('.indicator-row');
-        rows.forEach(row => {
-            const indicatorId = row.dataset.indicatorId;
-            if (indicatorId && this.helpData[indicatorId]) {
-                this.addHelpIconToRow(row, indicatorId);
-            }
-        });
-    }
-
-    addHelpIconToRow(row, indicatorId) {
-        // Проверяем, не добавлена ли уже иконка
-        if (row.querySelector('.help-icon')) {
-            return; // Иконка уже есть, пропускаем
-        }
-
-        const nameCell = row.querySelector('.indicator-name');
-        if (nameCell && this.helpData[indicatorId]) {
-            const helpIcon = document.createElement('button');
-            helpIcon.className = 'help-icon';
-            helpIcon.innerHTML = '?';
-            helpIcon.title = 'Объяснение показателя';
-            helpIcon.dataset.indicatorId = indicatorId;
-            
-            // Вставляем после названия показателя
-            const link = nameCell.querySelector('.indicator-link');
-            if (link) {
-                // Вставляем иконку после кнопки с названием
-                link.insertAdjacentElement('afterend', helpIcon);
-            }
-            
-            helpIcon.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.showHelp(indicatorId);
-            });
-        }
+        }, 500);
     }
 
     setupHelpModal() {
-        // Проверяем, не существует ли уже модальное окно
-        if (document.getElementById('help-modal')) {
-            return;
-        }
-
         // Создаем модальное окно для помощи
         const modalHTML = `
             <div id="help-modal" class="modal">
-                <div class="modal-content">
+                <div class="modal-content help-modal-content">
                     <div class="modal-header">
                         <h2 id="help-title">Контекстный помощник</h2>
-                        <button class="modal-close help-modal-close">&times;</button>
+                        <button class="modal-close" id="help-modal-close">&times;</button>
                     </div>
                     <div class="modal-body">
                         <div class="help-content">
@@ -485,18 +443,33 @@ class ContextHelper {
             </div>
         `;
         
+        // Удаляем существующее модальное окно, если оно есть
+        const existingModal = document.getElementById('help-modal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+        
         document.body.insertAdjacentHTML('beforeend', modalHTML);
         
         // Добавляем обработчики закрытия
-        document.querySelector('.help-modal-close').addEventListener('click', () => {
-            this.closeHelp();
-        });
+        const helpModalClose = document.getElementById('help-modal-close');
+        const helpModal = document.getElementById('help-modal');
         
-        document.getElementById('help-modal').addEventListener('click', (e) => {
-            if (e.target.id === 'help-modal') {
+        if (helpModalClose) {
+            helpModalClose.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 this.closeHelp();
-            }
-        });
+            });
+        }
+        
+        if (helpModal) {
+            helpModal.addEventListener('click', (e) => {
+                if (e.target === helpModal) {
+                    this.closeHelp();
+                }
+            });
+        }
     }
 
     showHelp(indicatorId) {
@@ -504,8 +477,13 @@ class ContextHelper {
         if (!data) return;
 
         const modal = document.getElementById('help-modal');
-        const indicator = this.indicators?.find(i => i.id === indicatorId) || 
-                         window.dashboardData?.indicators?.find(i => i.id === indicatorId);
+        if (!modal) return;
+
+        // Получаем данные показателя
+        const dashboard = window.dashboardInstance || 
+                        (window.dashboardData?.indicators ? { indicators: window.dashboardData.indicators } : null);
+        
+        const indicator = dashboard?.indicators?.find(i => i.id === indicatorId);
         
         // Заголовок
         document.getElementById('help-title').textContent = `Объяснение: ${data.title}`;
@@ -531,8 +509,7 @@ class ContextHelper {
 
         // Показываем актуальную информацию в зависимости от значения показателя
         if (indicator) {
-            const currentValue = indicator.lastResult?.value;
-            const isNormal = this.isValueNormal(indicator, currentValue);
+            const currentValue = indicator.history?.[0]?.value;
             
             if (currentValue !== undefined) {
                 // Определяем, высокое или низкое значение
@@ -567,8 +544,8 @@ class ContextHelper {
         }
 
         // Если не определили отклонение, показываем общую информацию
-        if (!document.getElementById('low-section').style.display.includes('block') && 
-            !document.getElementById('high-section').style.display.includes('block')) {
+        if (document.getElementById('low-section').style.display !== 'block' && 
+            document.getElementById('high-section').style.display !== 'block') {
             if (data.low) this.populateSection('low', data.low);
             if (data.high) this.populateSection('high', data.high);
         }
@@ -579,55 +556,45 @@ class ContextHelper {
 
     populateSection(type, data) {
         const section = document.getElementById(`${type}-section`);
-        section.style.display = 'block';
-        
-        if (data.causes) this.populateList(`${type}-causes`, data.causes);
-        if (data.symptoms) {
-            this.populateList(`${type}-symptoms`, data.symptoms);
-            document.getElementById(`${type}-symptoms-container`).style.display = 'block';
-        } else {
-            document.getElementById(`${type}-symptoms-container`).style.display = 'none';
+        if (section) {
+            section.style.display = 'block';
+            
+            if (data.causes) this.populateList(`${type}-causes`, data.causes);
+            if (data.symptoms) {
+                this.populateList(`${type}-symptoms`, data.symptoms);
+                const symptomsContainer = document.getElementById(`${type}-symptoms-container`);
+                if (symptomsContainer) symptomsContainer.style.display = 'block';
+            } else {
+                const symptomsContainer = document.getElementById(`${type}-symptoms-container`);
+                if (symptomsContainer) symptomsContainer.style.display = 'none';
+            }
+            if (data.recommendations) this.populateList(`${type}-recommendations`, data.recommendations);
         }
-        if (data.recommendations) this.populateList(`${type}-recommendations`, data.recommendations);
     }
 
     populateList(listId, items) {
         const list = document.getElementById(listId);
-        items.forEach(item => {
-            const li = document.createElement('li');
-            li.textContent = item;
-            list.appendChild(li);
-        });
+        if (list) {
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                list.appendChild(li);
+            });
+        }
     }
 
     clearList(listId) {
         const list = document.getElementById(listId);
-        list.innerHTML = '';
+        if (list) {
+            list.innerHTML = '';
+        }
     }
 
     closeHelp() {
-        document.getElementById('help-modal').style.display = 'none';
-    }
-
-    isValueNormal(indicator, value) {
-        // Копия метода из dashboard_script.js
-        if (indicator.reference.includes('зависят') || indicator.reference.includes('фаза')) {
-            return true;
+        const modal = document.getElementById('help-modal');
+        if (modal) {
+            modal.style.display = 'none';
         }
-        
-        if (indicator.reference.startsWith('<')) {
-            const maxRef = parseFloat(indicator.reference.replace('<', '').trim());
-            return value <= maxRef;
-        }
-        
-        const rangeMatch = indicator.reference.match(/(\d+[,.]?\d*)\s*-\s*(\d+[,.]?\d*)/);
-        if (rangeMatch) {
-            const minRef = parseFloat(rangeMatch[1].replace(',', '.'));
-            const maxRef = parseFloat(rangeMatch[2].replace(',', '.'));
-            return value >= minRef && value <= maxRef;
-        }
-        
-        return true;
     }
 }
 
