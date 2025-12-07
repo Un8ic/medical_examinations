@@ -639,3 +639,4 @@ class CheckupChecklist {
 document.addEventListener('DOMContentLoaded', () => {
     new CheckupChecklist();
 });
+
